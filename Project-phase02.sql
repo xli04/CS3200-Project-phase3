@@ -27,5 +27,6 @@ CREATE TABLE if not exists Business_Orders(
     TotalRevenue int not null,
     PRIMARY KEY(Seller_id, OrderID)
     -- foreign key
-)
+);
 
+# this is just for test
