@@ -27,5 +27,20 @@ CREATE TABLE if not exists Business_Orders(
     TotalRevenue int not null,
     PRIMARY KEY(Seller_id, OrderID)
     -- foreign key
-)
+);
+
+CREATE TABLE IF NOT EXISTS Customers(
+    CustomerID int NOT NULL,
+    UserName varchar(50) NOT NULL,
+    PassWord varchar(50) NOT NULL,
+    Email varchar(50) NOT NULL,
+    Address varchar(100) NOT NULL,
+    PRIMARY KEY (CustomerID)
+    -- foreign key
+);
+
+CREATE TABLE
+
+
+
 
