@@ -1,4 +1,4 @@
-CREATE DATABASE commerce;
+CREATE DATABASE IF NOT EXISTS commerce;
 USE commerce;
 
 CREATE Table IF NOT EXISTS Small_Business_Seller
@@ -10,6 +10,17 @@ CREATE Table IF NOT EXISTS Small_Business_Seller
     Profile    varchar(300) NOT NULL,
     PRIMARY KEY (BusinessID)
 );
+
+CREATE TABLE IF NOT EXISTS Orders
+(
+    OrderID          int          NOT NULL,
+    Cost             int          NOT NULL,
+    Placed_Time      DATETIME     NOT NULL,
+    Status           int          NOT NULL,
+    Shipping_Address varchar(100) NOT NULL,
+    PRIMARY KEY (OrderID)
+);
+
 
 CREATE TABLE IF NOT EXISTS Products
 (
@@ -36,6 +47,33 @@ CREATE TABLE if not exists Business_Orders
         on update cascade on delete restrict
 );
 
+CREATE TABLE IF NOT EXISTS Customers
+(
+    CustomerID int          NOT NULL,
+    UserName   varchar(50)  NOT NULL,
+    PassWord   varchar(50)  NOT NULL,
+    Email      varchar(50)  NOT NULL,
+    Address    varchar(100) NOT NULL,
+    PRIMARY KEY (CustomerID)
+);
+
+
+CREATE TABLE IF NOT EXISTS Shippers
+(
+    CompanyName    varchar(100) NOT NULL,
+    CompanyAddress varchar(100) NOT NULL,
+    Rating         INT          NOT NULL,
+    PRIMARY KEY (CompanyName)
+);
+
+CREATE TABLE IF NOT EXISTS ServiceRepresentative
+(
+    EmployeeID int NOT NULL,
+    Phone      varchar(10),
+    Name       varchar(50),
+    PRIMARY KEY (EmployeeID)
+);
+
 CREATE TABLE IF NOT EXISTS OrderDetails
 (
     ProductID int NOT NULL,
@@ -49,15 +87,7 @@ CREATE TABLE IF NOT EXISTS OrderDetails
         on update cascade on delete restrict
 );
 
-CREATE TABLE IF NOT EXISTS Customers
-(
-    CustomerID int          NOT NULL,
-    UserName   varchar(50)  NOT NULL,
-    PassWord   varchar(50)  NOT NULL,
-    Email      varchar(50)  NOT NULL,
-    Address    varchar(100) NOT NULL,
-    PRIMARY KEY (CustomerID)
-);
+
 
 CREATE TABLE IF NOT EXISTS Card
 (
@@ -71,15 +101,6 @@ CREATE TABLE IF NOT EXISTS Card
         on update cascade on delete restrict
 );
 
-CREATE TABLE IF NOT EXISTS Orders
-(
-    OrderID          int          NOT NULL,
-    Cost             int          NOT NULL,
-    Placed_Time      DATETIME     NOT NULL,
-    Status           int          NOT NULL,
-    Shipping_Address varchar(100) NOT NULL,
-    PRIMARY KEY (OrderID)
-);
 
 CREATE TABLE IF NOT EXISTS Cart
 (
@@ -107,30 +128,6 @@ CREATE TABLE IF NOT EXISTS Product_In_Cart
             on update cascade on delete restrict
 );
 
-CREATE TABLE IF NOT EXISTS ServiceRepresentative
-(
-    EmployeeID int NOT NULL,
-    Phone      varchar(10),
-    Name       varchar(50),
-    PRIMARY KEY (EmployeeID)
-);
-
-CREATE TABLE IF NOT EXISTS Response
-(
-    ResponseID int          NOT NULL,
-    Contents   varchar(500) NOT NULL,
-    Type       enum ('Phone','Website','Email','Carrier Pigeon','Walkie Talkie','Talking'),
-    ServiceID  int          NOT NULL,
-    EmployeeID int          NOT NULL,
-    PRIMARY KEY (ResponseID),
-    CONSTRAINT fk_14 FOREIGN KEY (EmployeeID)
-        REFERENCES ServiceRepresentative (EmployeeID)
-        on update cascade on delete restrict,
-    CONSTRAINT fk_15 FOREIGN KEY (ServiceID)
-        REFERENCES Service (ServiceID)
-        on update cascade on delete restrict
-);
-
 CREATE TABLE IF NOT EXISTS Service
 (
     ServiceID  int                                         NOT NULL,
@@ -152,13 +149,37 @@ CREATE TABLE IF NOT EXISTS Service
         on update cascade on delete restrict
 );
 
-CREATE TABLE IF NOT EXISTS Shippers
+CREATE TABLE IF NOT EXISTS Response
 (
-    CompanyName    varchar(100) NOT NULL,
-    CompanyAddress varchar(100) NOT NULL,
-    Rating         INT          NOT NULL,
-    PRIMARY KEY (CompanyName)
+    ResponseID int          NOT NULL,
+    Contents   varchar(500) NOT NULL,
+    Type       enum ('Phone','Website','Email','Carrier Pigeon','Walkie Talkie','Talking'),
+    ServiceID  int          NOT NULL,
+    EmployeeID int          NOT NULL,
+    PRIMARY KEY (ResponseID),
+    CONSTRAINT fk_14 FOREIGN KEY (EmployeeID)
+        REFERENCES ServiceRepresentative (EmployeeID)
+        on update cascade on delete restrict,
+    CONSTRAINT fk_15 FOREIGN KEY (ServiceID)
+        REFERENCES Service (ServiceID)
+        on update cascade on delete restrict
 );
+
+CREATE TABLE IF NOT EXISTS Drivers
+(
+    DriverID                  Int          NOT NULL,
+    CompanyName               varchar(100) NOT NULL,
+    Age                       int          NOT NULL,
+    YearsOfService            INT          NOT NULL,
+    Driver_License_Expiration BOOLEAN      NOT NULL,
+    Phone                     varchar(20)  NOT NULL,
+    PRIMARY KEY (DriverID, CompanyName),
+    CONSTRAINT fk_05
+        FOREIGN KEY (CompanyName) REFERENCES Shippers (CompanyName)
+            on update cascade on DELETE restrict
+);
+
+
 
 CREATE TABLE IF NOT EXISTS Shipping_Detail
 (
@@ -186,19 +207,7 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
         on update cascade on delete restrict
 );
 
-CREATE TABLE IF NOT EXISTS Drivers
-(
-    DriverID                  Int          NOT NULL,
-    CompanyName               varchar(100) NOT NULL,
-    Age                       int          NOT NULL,
-    YearsOfService            INT          NOT NULL,
-    Driver_License_Expiration BOOLEAN      NOT NULL,
-    Phone                     varchar(20)  NOT NULL,
-    PRIMARY KEY (DriverID, CompanyName),
-    CONSTRAINT fk_05
-        FOREIGN KEY (CompanyName) REFERENCES Shippers (CompanyName)
-            on update cascade on DELETE restrict
-);
+
 
 -- I vote to not have this table - YuFeng
 # CREATE TABLE IF NOT EXISTS Vehicles
