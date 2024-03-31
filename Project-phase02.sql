@@ -59,11 +59,11 @@ CREATE TABLE IF NOT EXISTS Customers
     PRIMARY KEY (CustomerID)
 );
 
-CREATE TABLE IF NOT EXISTS PaymentMethod
+CREATE TABLE IF NOT EXISTS Card
 (
     CustomerID     int          NOT NULL,
-    Credit_Debit   BOOLEAN      NOT NULL,
-    E_CHECK        BOOLEAN      NOT NULL,
+    CardNumber     int          NOT NULL,
+    ExpirationDate DATE         NOT NULL,
     BillingAddress varchar(100) NOT NULL,
     PRIMARY KEY (CustomerID),
     CONSTRAINT fk_20 FOREIGN KEY (CustomerID)
