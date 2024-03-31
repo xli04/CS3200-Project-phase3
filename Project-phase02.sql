@@ -39,16 +39,6 @@ CREATE TABLE IF NOT EXISTS Customers(
     -- foreign key
 );
 
-CREATE TABLE IF NOT EXISTS Service(
-    ServiceID INT NOT NULL,
-    Type INT NOT NULL,
-    StartTime DATETIME not null,
-    EndTime DATETIME not null,
-    CustomerID int NOT NULL,
-    PRIMARY KEY(ServiceID)
-    -- foreign key
-);
-
 CREATE TABLE IF NOT EXISTS PaymentMethod(
     CustomerID int NOT NULL,
     Credit_Debit BOOLEAN NOT NULL,
@@ -80,6 +70,7 @@ CREATE TABLE IF NOT EXISTS Product_In_Cart(
     CustomerID int NOT NULL,
     ProductID int NOT NULL,
     Quantity int NOT NULL,
+    Price int NOT NULL,
     PRIMARY KEY (CustomerID, ProductID),
     CONSTRAINT fk_01
         FOREIGN KEY (CustomerID) REFERENCES Cart (CustomerID) on update cascade on delete restrict,
@@ -91,32 +82,31 @@ CREATE TABLE IF NOT EXISTS ServiceRepresentative(
     EmployeeID int NOT NULL,
     Phone varchar(10),
     Name varchar(50),
-    ClientID int NOT NULL,
     PRIMARY KEY (EmployeeID)
 );
 
-CREATE TABLE IF NOT EXISTS Communication(
-    ReferenceID int NOT NULL,
-    EmployeeID int NOT NULL,
-    ClientID int NOT NULL,
+CREATE TABLE IF NOT EXISTS Response (
+    Contents varchar(500) NOT NULL,
+    ResponseID int NOT NULL,
     Type enum('Phone','Website','Email','Carrier Pigeon','Walkie Talkie','Talking'),
-    Response TEXT NOT NULL,
-    PRIMARY KEY (ReferenceID)
+    PRIMARY KEY (ResponseID)
 );
 
 CREATE TABLE IF NOT EXISTS Service(
     ServiceID int NOT NULL,
-    Cost decimal(10,2) NOT NULL,
     Type enum('Return','Exchange','Repair','Other') NOT NULL ,
     CustomerID int NOT NULL,
+    OrderID int NOT NULL,
+    StartTime datetime NOT NULL,
+    EndTime datetime NOT NULL,
     PRIMARY KEY (ServiceID)
 );
 
 CREATE TABLE IF NOT EXISTS Shippers(
-    ShipperID Int NOT NULL,
+    CompanyName varchar(100) NOT NULL,
     CompanyAddress varchar(100) NOT NULL,
     Rating INT NOT NULL,
-    PRIMARY KEY (ShipperID)
+    PRIMARY KEY (CompanyName)
     -- foreign key
 );
 
@@ -134,11 +124,14 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail(
 
 CREATE TABLE IF NOT EXISTS Drivers(
     DriverID Int NOT NULL,
+    CompanyName varchar(100) NOT NULL,
     Age int NOT NULL,
     YearsOfService INT NOT NULL,
     Driver_License_Expiration BOOLEAN NOT NULL,
     Phone varchar(20) NOT NULL,
-    PRIMARY KEY (DriverID)
+    PRIMARY KEY (DriverID, CompanyName),
+    constraint fk_05
+        FOREIGN KEY (CompanyName) REFERENCES Shippers(CompanyName) on update cascade on DELETE restrict
     -- foreign key, multivalued attribute vehicles
 );
 
