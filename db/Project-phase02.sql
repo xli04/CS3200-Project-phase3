@@ -3,7 +3,7 @@ USE commerce;
 
 CREATE Table IF NOT EXISTS Small_Business_Seller
 (
-    BusinessID Int          NOT NULL,
+    BusinessID int          NOT NULL,
     UserName   varchar(100) NOT NULL UNIQUE,
     PassWord   int          Not NULL,
     Email      varchar(50)  NOT NULL,
@@ -13,39 +13,31 @@ CREATE Table IF NOT EXISTS Small_Business_Seller
 
 CREATE TABLE IF NOT EXISTS Orders
 (
-    OrderID          int          NOT NULL,
-    Cost             int          NOT NULL,
-    Placed_Time      DATETIME     NOT NULL,
-    Status           int          NOT NULL,
-    Shipping_Address varchar(100) NOT NULL,
+    OrderID         int          NOT NULL,
+    Cost            int          NOT NULL,
+    PlacedTime      datetime     NOT NULL,
+    Status          int          NOT NULL,
+    ShippingAddress varchar(100) NOT NULL,
     PRIMARY KEY (OrderID)
 );
 
 
 CREATE TABLE IF NOT EXISTS Products
 (
-    ProductID              Int          NOT NULL,
-    Price                  Int          Not NULL,
-    Units_In_Stock         INT          NOT NULL,
-    ProductName            varchar(50)  NOT NULL,
-    Production_Description varchar(200) NOT NULL,
-    BusinessID             int          NOT NULL,
+    ProductID             int          NOT NULL,
+    Price                 int          Not NULL,
+    UnitsInStock          int          NOT NULL,
+    ProductName           varchar(50)  NOT NULL,
+    ProductionDescription varchar(200) NOT NULL,
+    BusinessID            int          NOT NULL,
+    UnitsSold             int          not null,
+    OnSale                boolean      not null,
     PRIMARY KEY (ProductID),
     CONSTRAINT fk_06 FOREIGN KEY (BusinessID)
         REFERENCES Small_Business_Seller (BusinessID)
         on update cascade on delete restrict
 );
 
-CREATE TABLE if not exists Business_Orders
-(
-    Seller_id    int Not NUll,
-    OrderID      int not null,
-    TotalRevenue int not null,
-    PRIMARY KEY (Seller_id, OrderID),
-    CONSTRAINT fk_07 FOREIGN KEY (Seller_id)
-        REFERENCES Small_Business_Seller (BusinessID)
-        on update cascade on delete restrict
-);
 
 CREATE TABLE IF NOT EXISTS Customers
 (
@@ -62,7 +54,7 @@ CREATE TABLE IF NOT EXISTS Shippers
 (
     CompanyName    varchar(100) NOT NULL,
     CompanyAddress varchar(100) NOT NULL,
-    Rating         INT          NOT NULL,
+    Rating         int          NOT NULL,
     PRIMARY KEY (CompanyName)
 );
 
@@ -93,7 +85,7 @@ CREATE TABLE IF NOT EXISTS Card
 (
     CustomerID     int          NOT NULL,
     CardNumber     int          NOT NULL,
-    ExpirationDate DATE         NOT NULL,
+    ExpirationDate Date         NOT NULL,
     BillingAddress varchar(100) NOT NULL,
     PRIMARY KEY (CustomerID),
     CONSTRAINT fk_20 FOREIGN KEY (CustomerID)
@@ -167,12 +159,12 @@ CREATE TABLE IF NOT EXISTS Response
 
 CREATE TABLE IF NOT EXISTS Drivers
 (
-    DriverID                  Int          NOT NULL,
-    CompanyName               varchar(100) NOT NULL,
-    Age                       int          NOT NULL,
-    YearsOfService            INT          NOT NULL,
-    Driver_License_Expiration BOOLEAN      NOT NULL,
-    Phone                     varchar(20)  NOT NULL,
+    DriverID                int          NOT NULL,
+    CompanyName             varchar(100) NOT NULL,
+    Age                     int          NOT NULL,
+    YearsOfService          int          NOT NULL,
+    DriverLicenseExpiration boolean      NOT NULL,
+    Phone                   varchar(20)  NOT NULL,
     PRIMARY KEY (DriverID, CompanyName),
     CONSTRAINT fk_05
         FOREIGN KEY (CompanyName) REFERENCES Shippers (CompanyName)
@@ -187,8 +179,8 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
     DriverID                int          NOT NULL,
     CompanyName             varchar(100) NOT NULL,
     Destination             varchar(100) NOT NULL,
-    Estimated_Shipping_TIme DATETIME     NOT NULL,
-    Actual_Estimated_Time   DATETIME     NOT NULL,
+    Estimated_Shipping_TIme datetime     NOT NULL,
+    Actual_Estimated_Time   datetime     NOT NULL,
     PackageSize             Int          NOT NULL,
     OrderID                 int          NOT NULL,
     CustomerID              int          NOT NULL,
