@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Products
     ProductionDescription varchar(200) NOT NULL,
     BusinessID            int          NOT NULL,
     UnitsSold             int          not null,
-    OnSale                boolean      not null,
+    OnSale                boolean      not null default false,
     PRIMARY KEY (ProductID),
     CONSTRAINT fk_06 FOREIGN KEY (BusinessID)
         REFERENCES Small_Business_Seller (BusinessID)
