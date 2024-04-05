@@ -25,6 +25,24 @@ def get_customers():
     the_response.mimetype = 'application/json'
     return the_response
 
+
+@customers.route('/customers',methods=['PUT'])
+def update_customer():
+    cust_info = request.json
+    # current_app.logger.infor(cust_info)
+    cust_id = cust_info['id']
+    first = cust_info['first_name']
+    last = cust_info['last_name']
+    company = cust_info['company']
+    
+    query = 'UPDATE customers SET first_name = %s, last_name = %s, company = %s, where id = %s'
+    data = (first,last,company,cust_id)
+    cursor = db.get_db().cursor()
+    r = cursor.execute(query,data)
+    db.get_db().commit()
+    return 'YIPPEEEEEEEEEEEEEE'
+
+
 # Get customer detail for customer with particular userID
 @customers.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
@@ -39,10 +57,3 @@ def get_customer(userID):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
-
-@customers.route('/customers',methods=['PUT'])
-def update_customer():
-    cust_info = request.json
-    cust_id = cust_info['id']
-    first = cust_info['first_name']
-    last = cust_info['last_name']
