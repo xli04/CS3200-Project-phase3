@@ -200,6 +200,62 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
         REFERENCES Customers (CustomerID)
         on update cascade on delete restrict
 );
+#fake data
+INSERT INTO Small_Business_Seller (BusinessID, UserName, PassWord, Email, Profile) VALUES
+(50, 'seller50', 12345, 'seller50@example.com', 'Profile of seller 50'),
+(51, 'seller51', 12346, 'seller51@example.com', 'Profile of seller 51');
+
+INSERT INTO Orders (OrderID, Cost, PlacedTime, ShippingAddress, Status) VALUES
+(50, 1000, '2024-04-02 10:00:00', '123 Main St, Anytown', 1),
+(51, 1500, '2024-04-03 11:00:00', '456 Elm St, Sometown', 2);
+
+INSERT INTO Products (ProductID, Price, UnitsInStock, ProductName, ProductionDescription, BusinessID, UnitsSold, OnSale) VALUES
+(50, 200, 10, 'Product 50', 'Description of product 50', 50, 5, false),
+(51, 300, 15, 'Product 51', 'Description of product 51', 51, 3, true);
+
+INSERT INTO Customers (CustomerID, UserName, PassWord, Email, Address) VALUES
+(50, 'customer50', 'password50', 'customer50@example.com', '789 Pine St, Yourtown'),
+(51, 'customer51', 'password51', 'customer51@example.com', '101 Oak St, Mytown');
+
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES
+('Shipper50', '100 Shipper St, Shippertown', 5),
+('Shipper51', '200 Shipper Ave, Shipville', 4);
+
+INSERT INTO ServiceRepresentative (EmployeeID, Phone, Name) VALUES
+(50, '1234567890', 'Rep 50'),
+(51, '0987654321', 'Rep 51');
+
+INSERT INTO OrderDetails (ProductID, OrderID, Quantity) VALUES
+(50, 50, 1),
+(51, 51, 2);
+
+INSERT INTO Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES
+(50, 50000000, '2025-12-31', '123 Main St, Anytown'),
+(51, 51000000, '2026-12-31', '456 Elm St, Sometown');
+
+INSERT INTO Cart (CustomerID, TotalItems, Total_Price) VALUES
+(50, 3, 600),
+(51, 2, 500);
+
+INSERT INTO Product_In_Cart (CustomerID, ProductID, Quantity, Price) VALUES
+(50, 50, 1, 200),
+(51, 51, 1, 300);
+
+INSERT INTO Service (ServiceID, Type, CustomerID, OrderID, StartTime, EndTime, RepID, Description) VALUES
+(50, 'Return', 50, 50, '2024-04-02 12:00:00', '2024-04-03 12:00:00', 50, 'Return of Product 50'),
+(51, 'Repair', 51, 51, '2024-04-03 14:00:00', '2024-04-04 14:00:00', 51, 'Repair of Product 51');
+
+INSERT INTO Response (ResponseID, Contents, Type, ServiceID, EmployeeID) VALUES
+(50, 'Response for Service 50', 'Email', 50, 50),
+(51, 'Response for Service 51', 'Phone', 51, 51);
+
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES
+(50, 'Shipper50', 35, 10, false, '1234567890'),
+(51, 'Shipper51', 40, 15, true, '0987654321');
+
+INSERT INTO Shipping_Detail (TrackingNumber, DriverID, CompanyName, Destination, Estimated_Shipping_TIme, Actual_Estimated_Time, PackageSize, OrderID, CustomerID) VALUES
+(50, 50, 'Shipper50', '789 Pine St, Yourtown', '2024-04-05 10:00:00', '2024-04-05 12:00:00', 3, 50, 50),
+(51, 51, 'Shipper51', '101 Oak St, Mytown', '2024-04-06 11:00:00', '2024-04-06 13:00:00', 2, 51, 51);
 
 
 # 1.1 As a Small Business Seller, I would like to easily list my products with
