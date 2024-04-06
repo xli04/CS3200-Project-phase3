@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS OrderDetails
 CREATE TABLE IF NOT EXISTS Card
 (
     CustomerID     int          NOT NULL,
-    CardNumber     int          NOT NULL,
-    ExpirationDate Date         NOT NULL,
+    CardNumber     varchar(100)          NOT NULL,
+    ExpirationDate DATETIME         NOT NULL,
     BillingAddress varchar(100) NOT NULL,
     PRIMARY KEY (CardNumber),
     CONSTRAINT fk_20 FOREIGN KEY (CustomerID)
@@ -110,7 +110,6 @@ CREATE TABLE IF NOT EXISTS Product_In_Cart
     CustomerID int NOT NULL,
     ProductID  int NOT NULL,
     Quantity   int NOT NULL,
-    Price      int NOT NULL,
     PRIMARY KEY (CustomerID, ProductID),
     CONSTRAINT fk_01
         FOREIGN KEY (CustomerID) REFERENCES Cart (CustomerID)
@@ -124,7 +123,6 @@ CREATE TABLE IF NOT EXISTS Service
 (
     ServiceID   int                                         NOT NULL AUTO_INCREMENT,
     Type        enum ('Return','Exchange','Repair','Other') NOT NULL,
-    CustomerID  int                                         NOT NULL,
     OrderID     int                                         NOT NULL,
     StartTime   datetime                                    NOT NULL,
     EndTime     datetime                                    NOT NULL,
@@ -133,9 +131,6 @@ CREATE TABLE IF NOT EXISTS Service
     PRIMARY KEY (ServiceID),
     CONSTRAINT fk_16 FOREIGN KEY (OrderID)
         REFERENCES Orders (OrderID)
-        on update cascade on delete restrict,
-    CONSTRAINT fk_17 FOREIGN KEY (CustomerID)
-        REFERENCES Customers (CustomerID)
         on update cascade on delete restrict,
     CONSTRAINT fk_18 FOREIGN KEY (RepID)
         REFERENCES ServiceRepresentative (EmployeeID)
@@ -148,11 +143,7 @@ CREATE TABLE IF NOT EXISTS Response
     Contents   varchar(500) NOT NULL,
     Type       enum ('Phone','Website','Email','Carrier Pigeon','Walkie Talkie','Talking'),
     ServiceID  int          NOT NULL,
-    EmployeeID int          NOT NULL,
     PRIMARY KEY (ResponseID),
-    CONSTRAINT fk_14 FOREIGN KEY (EmployeeID)
-        REFERENCES ServiceRepresentative (EmployeeID)
-        on update cascade on delete restrict,
     CONSTRAINT fk_15 FOREIGN KEY (ServiceID)
         REFERENCES Service (ServiceID)
         on update cascade on delete restrict
@@ -233,6 +224,33 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Quantity exceeds units in stock.';
     END IF;
 END;
+
+CREATE TRIGGER count_num AFTER INSERT on Product_In_Cart
+    FOR EACH ROW
+    BEGIN
+        DECLARE total_num int default 0;
+        SELECT SUM(pi.Quantity) INTO total_num
+        FROM Product_In_Cart pi join Products p on pi.ProductID = p.ProductID
+        join Cart C on pi.CustomerID = C.CustomerID
+        WHERE C.CustomerID = NEW.CustomerID;
+        UPDATE Cart
+        SET TotalItems = total_num
+        WHERE CustomerID = NEW.CustomerID;
+    end;
+
+
+CREATE TRIGGER count_price AFTER INSERT on Product_In_Cart
+    FOR EACH ROW
+    BEGIN
+        DECLARE total_cost int default 0;
+        SELECT SUM(p.Price * pi.Quantity) INTO total_cost
+        FROM Product_In_Cart pi join Products p on pi.ProductID = p.ProductID
+        join Cart C on pi.CustomerID = C.CustomerID
+        WHERE C.CustomerID = NEW.CustomerID;
+        UPDATE Cart
+        SET Total_Price = total_cost
+        WHERE CustomerID = NEW.CustomerID;
+    end;
 #fake data
 #shippers
 INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Ankunding, Murray and Romaguera', '6274 Buell Plaza', 1);
@@ -777,3 +795,320 @@ INSERT INTO commerce.OrderDetails (ProductID, OrderID, Quantity) VALUES (59, 31,
 INSERT INTO commerce.OrderDetails (ProductID, OrderID, Quantity) VALUES (60, 5, 1);
 INSERT INTO commerce.OrderDetails (ProductID, OrderID, Quantity) VALUES (60, 38, 3);
 INSERT INTO commerce.OrderDetails (ProductID, OrderID, Quantity) VALUES (60, 50, 2);
+
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (1, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (2, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (3, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (4, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (5, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (6, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (7, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (8, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (9, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (10, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (11, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (12, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (13, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (14, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (15, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (16, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (17, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (18, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (19, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (20, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (21, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (22, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (23, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (24, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (25, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (26, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (27, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (28, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (29, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (30, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (31, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (32, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (33, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (34, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (35, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (36, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (37, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (38, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (39, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (40, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (41, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (42, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (43, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (44, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (45, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (46, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (47, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (48, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (49, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (50, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (51, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (52, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (53, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (54, 0, 0);
+INSERT INTO commerce.Cart (CustomerID, TotalItems, Total_Price) VALUES (55, 0, 0);
+
+#Product_In_Cart
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (1, 10, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (2, 46, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (3, 48, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (4, 15, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (5, 36, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (5, 37, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (5, 45, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (6, 16, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (6, 31, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (8, 16, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (8, 51, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (9, 7, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (10, 8, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (10, 21, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (11, 4, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (11, 19, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (11, 44, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (13, 11, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (13, 55, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (14, 19, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (14, 32, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (14, 40, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (15, 32, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (16, 55, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (17, 39, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (17, 40, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (18, 57, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (19, 22, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (20, 15, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (20, 32, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (20, 38, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (20, 50, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (20, 52, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (21, 24, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (23, 7, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (23, 14, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (24, 29, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (24, 43, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (26, 14, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (26, 37, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (28, 51, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (29, 51, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (30, 20, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (30, 46, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (30, 54, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (31, 52, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (32, 29, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (33, 44, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (34, 37, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (35, 57, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (37, 54, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (38, 52, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (39, 4, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (39, 34, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (39, 48, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (41, 5, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (43, 30, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (43, 45, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (45, 41, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (47, 21, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (47, 33, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (48, 21, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (49, 31, 3);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (51, 7, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (52, 38, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (52, 51, 2);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (53, 22, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (53, 49, 1);
+INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity) VALUES (55, 12, 3);
+
+#Service
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (1, 'Exchange', 43, '2024-04-04 10:21:36', '2024-04-07 12:43:05', 8, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (2, 'Return', 15, '2024-04-05 10:15:04', '2024-04-07 18:45:25', 38, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (3, 'Repair', 18, '2024-04-03 08:35:38', '2024-04-07 18:41:48', 36, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (4, 'Other', 37, '2024-04-05 08:23:29', '2024-04-07 08:21:48', 3, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (5, 'Return', 11, '2024-04-05 05:55:11', '2024-04-07 18:57:18', 16, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (6, 'Repair', 38, '2024-04-02 07:38:41', '2024-04-07 18:42:33', 46, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (7, 'Return', 22, '2024-04-05 20:05:46', '2024-04-07 15:29:36', 6, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (8, 'Repair', 50, '2024-04-04 13:18:58', '2024-04-07 15:01:56', 34, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (9, 'Return', 54, '2024-04-01 02:33:35', '2024-04-07 03:50:29', 41, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (10, 'Return', 10, '2024-04-04 00:20:28', '2024-04-07 12:07:53', 34, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (11, 'Return', 36, '2024-04-03 16:21:09', '2024-04-07 07:17:08', 19, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (12, 'Return', 8, '2024-04-02 21:29:14', '2024-04-07 13:44:28', 33, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (13, 'Other', 44, '2024-04-01 23:18:15', '2024-04-07 08:28:57', 1, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (14, 'Repair', 35, '2024-04-02 18:27:11', '2024-04-07 23:24:43', 1, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (15, 'Exchange', 6, '2024-04-04 22:43:49', '2024-04-07 23:34:34', 5, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (16, 'Other', 43, '2024-04-05 16:50:23', '2024-04-07 11:27:41', 48, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (17, 'Return', 8, '2024-04-02 23:01:15', '2024-04-07 00:10:17', 45, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (18, 'Other', 1, '2024-04-02 17:23:03', '2024-04-07 01:58:40', 19, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (19, 'Repair', 46, '2024-04-05 00:08:11', '2024-04-07 04:53:24', 19, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (20, 'Return', 48, '2024-04-03 06:10:23', '2024-04-07 18:05:20', 51, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (21, 'Exchange', 6, '2024-04-03 12:24:06', '2024-04-07 15:21:53', 38, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (22, 'Other', 7, '2024-04-05 19:02:38', '2024-04-07 20:46:30', 14, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (23, 'Other', 19, '2024-04-04 22:56:38', '2024-04-07 09:21:19', 10, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (24, 'Repair', 35, '2024-04-02 20:48:46', '2024-04-07 11:19:45', 19, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (25, 'Return', 21, '2024-04-01 16:19:48', '2024-04-07 12:22:57', 16, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (26, 'Exchange', 24, '2024-04-01 18:53:26', '2024-04-07 09:33:09', 15, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (27, 'Other', 5, '2024-04-03 05:23:19', '2024-04-07 08:35:32', 26, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (28, 'Other', 18, '2024-04-02 15:30:59', '2024-04-07 10:30:32', 16, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (29, 'Exchange', 48, '2024-04-05 13:07:40', '2024-04-07 06:10:28', 17, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (30, 'Return', 31, '2024-04-03 15:10:59', '2024-04-07 23:54:45', 29, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (31, 'Repair', 38, '2024-04-01 11:12:31', '2024-04-07 20:01:54', 14, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (32, 'Return', 54, '2024-04-05 06:35:51', '2024-04-07 16:41:38', 36, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (33, 'Repair', 4, '2024-04-05 22:24:20', '2024-04-07 00:04:08', 55, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (34, 'Return', 30, '2024-04-02 23:26:11', '2024-04-07 17:43:05', 7, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (35, 'Return', 31, '2024-04-02 16:22:35', '2024-04-07 23:31:43', 24, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (36, 'Other', 39, '2024-04-05 09:30:20', '2024-04-07 06:01:55', 23, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (37, 'Repair', 21, '2024-04-02 23:01:15', '2024-04-07 05:04:23', 1, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (38, 'Return', 36, '2024-04-05 03:21:38', '2024-04-07 19:47:02', 46, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (39, 'Exchange', 45, '2024-04-01 13:58:53', '2024-04-07 06:48:27', 25, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (40, 'Other', 27, '2024-04-04 11:57:02', '2024-04-07 12:26:38', 20, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (41, 'Repair', 55, '2024-04-01 16:41:07', '2024-04-07 08:12:25', 50, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (42, 'Return', 2, '2024-04-05 00:08:15', '2024-04-07 14:16:25', 49, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (43, 'Repair', 41, '2024-04-01 03:50:09', '2024-04-07 14:02:17', 15, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (44, 'Other', 28, '2024-04-02 12:52:47', '2024-04-07 22:28:27', 37, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (45, 'Return', 35, '2024-04-03 23:05:10', '2024-04-07 04:53:21', 9, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (46, 'Repair', 17, '2024-04-04 17:46:39', '2024-04-07 00:05:47', 54, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (47, 'Repair', 18, '2024-04-01 19:26:05', '2024-04-07 01:10:11', 32, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (48, 'Repair', 9, '2024-04-01 22:59:41', '2024-04-07 15:35:23', 27, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (49, 'Return', 24, '2024-04-03 13:04:08', '2024-04-07 19:48:13', 28, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (50, 'Return', 38, '2024-04-05 18:10:46', '2024-04-07 08:30:20', 47, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (51, 'Exchange', 16, '2024-04-04 12:43:46', '2024-04-07 12:00:21', 2, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (52, 'Other', 26, '2024-04-05 04:45:49', '2024-04-07 20:04:15', 16, 'Carpentry service request for handcrafted furniture');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (53, 'Return', 49, '2024-04-03 11:37:04', '2024-04-07 19:19:44', 12, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (54, 'Other', 47, '2024-04-01 02:37:04', '2024-04-07 22:22:39', 43, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (55, 'Exchange', 44, '2024-04-03 18:40:24', '2024-04-07 06:51:41', 19, 'Electrical service request for custom-made lamp');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (56, 'Exchange', 32, '2024-04-05 15:21:03', '2024-04-07 05:13:59', 40, 'Painting service request for unique mural');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (57, 'Repair', 15, '2024-04-05 08:12:42', '2024-04-07 09:03:15', 4, 'Plumbing service request for handmade sink');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (58, 'Return', 29, '2024-04-01 16:50:26', '2024-04-07 17:45:23', 6, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (59, 'Repair', 48, '2024-04-01 03:19:55', '2024-04-07 05:14:44', 8, 'HVAC service request for artisanal air conditioning unit');
+INSERT INTO commerce.Service (ServiceID, Type, OrderID, StartTime, EndTime, RepID, Description) VALUES (60, 'Other', 34, '2024-04-05 18:10:35', '2024-04-07 12:32:44', 10, 'HVAC service request for artisanal air conditioning unit');
+
+#card
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (38, '201423831494126', '2023-04-16 02:05:55', '290 Wayridge Drive');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (14, '201510051624612', '2024-01-19 12:30:47', '8266 Sommers Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (51, '201863666362338', '2024-04-05 15:53:54', '5372 Fair Oaks Point');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (50, '30034589073520', '2023-11-18 22:25:56', '661 Menomonie Road');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (1, '30123245664770', '2023-05-28 09:43:42', '65 Melvin Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (37, '30393556810888', '2023-09-20 21:58:35', '2667 Golf Course Place');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (44, '30425225711129', '2023-09-16 06:40:25', '7637 Acker Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (9, '347492076511162', '2023-04-09 17:59:20', '86 Sycamore Lane');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (17, '3528833091109638', '2023-11-06 17:49:14', '458 Grayhawk Parkway');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (55, '3532283554913742', '2023-10-03 00:46:05', '94 Coleman Way');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (49, '3532296630079197', '2023-07-31 14:03:05', '70 Jay Terrace');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (54, '3534133552422113', '2023-09-23 03:04:08', '071 Vidon Way');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (1, '3535822134805709', '2023-04-15 06:34:59', '48 Manley Crossing');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (35, '3537687454424565', '2023-10-13 05:14:56', '589 Farmco Lane');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (4, '3538085958878460', '2023-10-18 07:35:35', '60 Maywood Center');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (6, '3540419050231524', '2023-10-08 08:15:39', '82033 Vernon Junction');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (46, '3540606958138476', '2023-05-28 01:39:36', '415 Packers Park');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (42, '3544664675766760', '2023-12-28 04:00:48', '6067 Kings Court');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (8, '3546597581252350', '2023-11-01 10:28:57', '91 Thierer Trail');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (40, '3550397024124180', '2023-04-25 01:18:10', '98 Thompson Point');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (26, '3550850010965875', '2024-03-10 09:41:27', '7167 2nd Park');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (27, '3551696400047165', '2023-10-25 13:37:33', '2568 Carey Terrace');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (3, '3552201293923280', '2023-09-20 08:31:52', '0 Farwell Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (48, '3556842650388371', '2023-10-10 08:23:13', '0 Amoth Center');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (43, '3557502811007513', '2023-07-07 18:01:21', '451 Charing Cross Circle');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (39, '3561012796396323', '2023-10-14 11:05:45', '5405 Center Lane');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (18, '3561909986062252', '2023-11-27 03:27:22', '924 Hallows Lane');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (45, '3562675448319577', '2023-07-25 13:47:58', '007 Anderson Center');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (52, '3563670603473912', '2023-04-19 08:36:54', '808 Pankratz Plaza');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (16, '3570576116996672', '2023-09-20 11:26:36', '524 Lakewood Avenue');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (33, '3571761694076878', '2023-11-22 19:55:19', '8679 Delladonna Junction');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (29, '3574146248351414', '2023-10-28 20:24:42', '57440 Fallview Center');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (34, '3576267577728119', '2023-08-13 03:44:23', '10465 Dwight Road');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (24, '3577107640393146', '2024-02-13 20:13:10', '8 Columbus Point');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (36, '3586892708226804', '2023-07-07 09:15:44', '3 Waxwing Plaza');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (22, '374622735496803', '2024-01-30 09:32:31', '2251 2nd Avenue');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (30, '4026937758648252', '2024-02-18 14:31:48', '61830 Dryden Court');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (15, '4041376345880592', '2023-09-28 08:32:55', '88 Transport Trail');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (41, '4405047407015464', '2023-10-21 21:29:45', '53 Menomonie Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (11, '4405620925306449', '2023-05-16 22:27:52', '2 Birchwood Avenue');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (53, '4903272040925351', '2023-04-21 04:07:41', '441 Sunbrook Parkway');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (3, '490372844170035558', '2023-07-24 16:03:17', '6542 Anzinger Way');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (7, '4913324140132392', '2023-12-04 03:48:37', '7314 Bluestem Drive');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (2, '4936870211095507', '2023-11-10 02:17:23', '8 Hansons Road');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (23, '50381629800327702', '2023-05-03 07:38:30', '40861 Prentice Center');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (20, '5100131117946872', '2024-03-19 00:55:42', '5752 Almo Trail');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (13, '5487047974843924', '2023-12-23 13:18:08', '75977 Sutherland Pass');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (5, '5509163658305496', '2023-08-29 13:58:44', '15 Dahle Plaza');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (28, '5602235929928995', '2023-11-23 11:08:38', '103 Marquette Pass');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (19, '5602238004938558', '2023-05-10 16:41:25', '059 Ronald Regan Crossing');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (12, '5602254043031487', '2023-06-08 09:55:18', '0 High Crossing Pass');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (4, '633301560444762873', '2023-08-01 17:26:40', '4 Cordelia Court');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (10, '633371625063582749', '2023-08-23 02:59:40', '22 Glacier Hill Pass');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (31, '6384284097498458', '2023-10-01 20:16:41', '90 Farwell Junction');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (25, '6390582551040480', '2023-07-12 10:56:47', '37 Porter Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (2, '6394501526456072', '2023-09-08 23:18:17', '2 Westend Pass');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (21, '670601199785144794', '2023-10-23 11:37:19', '9232 Lakeland Way');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (32, '6759112049778004256', '2023-11-20 21:43:29', '7 Kipling Drive');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (5, '67612420609111645', '2024-03-31 15:44:18', '403 Sutteridge Hill');
+INSERT INTO commerce.Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES (47, '676708796239156073', '2023-05-18 12:19:12', '249 Colorado Terrace');
+
+#Response
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (1, 'Repair broken window in office', 'Carrier Pigeon', 1);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (2, 'Mow lawn in front yard', 'Walkie Talkie', 2);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (3, 'Clean gutters on house', 'Website', 3);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (4, 'Unclog drain in laundry room', 'Phone', 4);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (5, 'Clean gutters on house', 'Email', 5);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (6, 'Replace light bulb in kitchen', 'Talking', 6);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (7, 'Trim trees in backyard', 'Phone', 7);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (8, 'Unclog drain in laundry room', 'Walkie Talkie', 8);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (9, 'Unclog drain in laundry room', 'Email', 9);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (10, 'Paint living room walls', 'Carrier Pigeon', 10);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (11, 'Paint living room walls', 'Walkie Talkie', 11);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (12, 'Mow lawn in front yard', 'Email', 12);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (13, 'Replace light bulb in kitchen', 'Email', 13);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (14, 'Paint living room walls', 'Website', 14);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (15, 'Clean gutters on house', 'Walkie Talkie', 15);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (16, 'Trim trees in backyard', 'Talking', 16);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (17, 'Clean gutters on house', 'Website', 17);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (18, 'Assemble furniture in guest room', 'Email', 18);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (19, 'Replace light bulb in kitchen', 'Carrier Pigeon', 19);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (20, 'Clean gutters on house', 'Phone', 20);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (21, 'Paint living room walls', 'Email', 21);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (22, 'Unclog drain in laundry room', 'Carrier Pigeon', 22);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (23, 'Unclog drain in laundry room', 'Walkie Talkie', 23);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (24, 'Clean gutters on house', 'Phone', 24);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (25, 'Paint living room walls', 'Walkie Talkie', 25);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (26, 'Assemble furniture in guest room', 'Phone', 26);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (27, 'Install new ceiling fan in bedroom', 'Talking', 27);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (28, 'Trim trees in backyard', 'Carrier Pigeon', 28);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (29, 'Paint living room walls', 'Phone', 29);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (30, 'Trim trees in backyard', 'Phone', 30);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (31, 'Mow lawn in front yard', 'Walkie Talkie', 31);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (32, 'Unclog drain in laundry room', 'Walkie Talkie', 32);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (33, 'Assemble furniture in guest room', 'Website', 33);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (34, 'Replace light bulb in kitchen', 'Talking', 34);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (35, 'Paint living room walls', 'Email', 35);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (36, 'Install new ceiling fan in bedroom', 'Carrier Pigeon', 36);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (37, 'Repair broken window in office', 'Carrier Pigeon', 37);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (38, 'Unclog drain in laundry room', 'Walkie Talkie', 38);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (39, 'Fix leaky faucet in bathroom', 'Carrier Pigeon', 39);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (40, 'Mow lawn in front yard', 'Website', 40);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (41, 'Assemble furniture in guest room', 'Walkie Talkie', 41);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (42, 'Unclog drain in laundry room', 'Carrier Pigeon', 42);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (43, 'Trim trees in backyard', 'Phone', 43);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (44, 'Mow lawn in front yard', 'Talking', 44);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (45, 'Trim trees in backyard', 'Phone', 45);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (46, 'Repair broken window in office', 'Email', 46);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (47, 'Trim trees in backyard', 'Email', 47);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (48, 'Assemble furniture in guest room', 'Talking', 48);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (49, 'Clean gutters on house', 'Walkie Talkie', 49);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (50, 'Replace light bulb in kitchen', 'Website', 50);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (51, 'Unclog drain in laundry room', 'Talking', 51);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (52, 'Install new ceiling fan in bedroom', 'Talking', 52);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (53, 'Clean gutters on house', 'Talking', 53);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (54, 'Trim trees in backyard', 'Walkie Talkie', 54);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (55, 'Repair broken window in office', 'Walkie Talkie', 55);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (56, 'Paint living room walls', 'Carrier Pigeon', 56);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (57, 'Replace light bulb in kitchen', 'Carrier Pigeon', 57);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (58, 'Clean gutters on house', 'Website', 58);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (59, 'Fix leaky faucet in bathroom', 'Talking', 59);
+INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID) VALUES (60, 'Replace light bulb in kitchen', 'Email', 60);
+
+
+
+
