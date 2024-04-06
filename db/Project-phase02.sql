@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS 
-USE 
+CREATE DATABASE IF NOT EXISTS commerce;
+USE commerce;
 
 CREATE Table IF NOT EXISTS Small_Business_Seller
 (
@@ -199,6 +199,7 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
         REFERENCES Customers (CustomerID)
         on update cascade on delete restrict
 );
+
 #fake data
 #shippers
 INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Ankunding, Murray and Romaguera', '6274 Buell Plaza', 1);

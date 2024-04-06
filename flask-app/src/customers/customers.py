@@ -12,9 +12,11 @@ customers = Blueprint('customers', __name__)
 # Get all customers from the DB
 @customers.route('/customers', methods=['GET'])
 def get_customers():
+    print("Reached GET")
     cursor = db.get_db().cursor()
-    cursor.execute('select id, company, last_name,\
-        first_name, job_title, business_phone from customers')
+    cursor.execute('select CustomerID, UserName, PassWord,\
+        Email, Address from Customers')
+    print("Statement executed")
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -30,13 +32,14 @@ def get_customers():
 def update_customer():
     cust_info = request.json
     # current_app.logger.infor(cust_info)
-    cust_id = cust_info['id']
-    first = cust_info['first_name']
-    last = cust_info['last_name']
-    company = cust_info['company']
+    cust_id = cust_info['CustomerID']
+    username = cust_info['UserName']
+    password = cust_info['PassWord']
+    email = cust_info['Email']
+    address = cust_info['Address']
     
-    query = 'UPDATE customers SET first_name = %s, last_name = %s, company = %s where id = %s'
-    data = (first,last,company,cust_id)
+    query = 'UPDATE customers SET UserName = %s, PassWord = %s, Email = %s, Address = %s where id = %s'
+    data = (username, password,email,address,cust_id)
     cursor = db.get_db().cursor()
     r = cursor.execute(query,data)
     db.get_db().commit()

@@ -19,7 +19,7 @@ def create_app():
     app.config['MYSQL_DATABASE_PASSWORD'] = open('/secrets/db_root_password.txt').readline().strip()
     app.config['MYSQL_DATABASE_HOST'] = 'db'
     app.config['MYSQL_DATABASE_PORT'] = 3306
-    app.config['MYSQL_DATABASE_DB'] = ''  # Change this to your DB name
+    app.config['MYSQL_DATABASE_DB'] = 'commerce'  # Change this to your DB name
 
     # Initialize the database object with the settings above. 
     db.init_app(app)
@@ -33,15 +33,30 @@ def create_app():
         return "<h1>Welcome to the 3200 boilerplate app</h1>"
 
     # Import the various Beluprint Objects
+    from src.card.card import card
+    from src.cart.cart import cart
     from src.customers.customers import customers
+    from src.drivers.drivers import drivers
+    from src.orderdetails.orderdetails import orderdetails
+    from src.orders.orders import orders
     from src.products.products  import products
-    from src.Shipper.shipper import shipper
+    from src.product_in_cart.product_in_cart  import pic
+    from src.response.response import response
+    from src.service.service import service
+    from src.service_representative.service_representative import rep
+    from src.shippers.shippers import shippers
+    from src.shipping_details.shipping_details import sd
+    from src.small_business_owners.small_business_owners import sbs
 
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
     app.register_blueprint(customers,   url_prefix='/c')
     app.register_blueprint(products,    url_prefix='/p')
-    app.register_blueprint(shipper,    url_prefix='/shipper')
+    app.register_blueprint(shippers,    url_prefix='/s')
+    app.register_blueprint(orders,    url_prefix='/o')
+    app.register_blueprint(sbs,    url_prefix='/sbs')
+    app.register_blueprint(drivers,    url_prefix='/d')
+    app.register_blueprint(rep,    url_prefix='/rep')
 
     # Don't forget to return the app object
     return app
