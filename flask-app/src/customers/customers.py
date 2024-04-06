@@ -40,7 +40,7 @@ def update_customer():
     cursor = db.get_db().cursor()
     r = cursor.execute(query,data)
     db.get_db().commit()
-    return 'YIPPEEEEEEEEEEEEEE'
+    return 'customer updated!'
 
 
 # Get customer detail for customer with particular userID
