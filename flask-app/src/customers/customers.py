@@ -35,7 +35,7 @@ def update_customer():
     last = cust_info['last_name']
     company = cust_info['company']
     
-    query = 'UPDATE customers SET first_name = %s, last_name = %s, company = %s, where id = %s'
+    query = 'UPDATE customers SET first_name = %s, last_name = %s, company = %s where id = %s'
     data = (first,last,company,cust_id)
     cursor = db.get_db().cursor()
     r = cursor.execute(query,data)
