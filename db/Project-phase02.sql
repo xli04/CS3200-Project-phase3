@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS commerce;
-USE commerce;
+CREATE DATABASE IF NOT EXISTS 
+USE 
 
 CREATE Table IF NOT EXISTS Small_Business_Seller
 (
@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS Orders
     OrderID         int          NOT NULL AUTO_INCREMENT,
     Cost            int          NOT NULL,
     PlacedTime      datetime     NOT NULL,
-    ShippingAddress varchar(100) NOT NULL,
     Status          int          NOT NULL,
     PRIMARY KEY (OrderID)
 );
@@ -201,320 +200,174 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
         on update cascade on delete restrict
 );
 #fake data
-INSERT INTO Small_Business_Seller (BusinessID, UserName, PassWord, Email, Profile) VALUES
-(50, 'seller50', 12345, 'seller50@example.com', 'Profile of seller 50'),
-(51, 'seller51', 12346, 'seller51@example.com', 'Profile of seller 51');
-
-INSERT INTO Orders (OrderID, Cost, PlacedTime, ShippingAddress, Status) VALUES
-(50, 1000, '2024-04-02 10:00:00', '123 Main St, Anytown', 1),
-(51, 1500, '2024-04-03 11:00:00', '456 Elm St, Sometown', 2);
-
-INSERT INTO Products (ProductID, Price, UnitsInStock, ProductName, ProductionDescription, BusinessID, UnitsSold, OnSale) VALUES
-(50, 200, 10, 'Product 50', 'Description of product 50', 50, 5, false),
-(51, 300, 15, 'Product 51', 'Description of product 51', 51, 3, true);
-
-INSERT INTO Customers (CustomerID, UserName, PassWord, Email, Address) VALUES
-(50, 'customer50', 'password50', 'customer50@example.com', '789 Pine St, Yourtown'),
-(51, 'customer51', 'password51', 'customer51@example.com', '101 Oak St, Mytown');
-
-INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES
-('Shipper50', '100 Shipper St, Shippertown', 5),
-('Shipper51', '200 Shipper Ave, Shipville', 4);
-
-INSERT INTO ServiceRepresentative (EmployeeID, Phone, Name) VALUES
-(50, '1234567890', 'Rep 50'),
-(51, '0987654321', 'Rep 51');
-
-INSERT INTO OrderDetails (ProductID, OrderID, Quantity) VALUES
-(50, 50, 1),
-(51, 51, 2);
-
-INSERT INTO Card (CustomerID, CardNumber, ExpirationDate, BillingAddress) VALUES
-(50, 50000000, '2025-12-31', '123 Main St, Anytown'),
-(51, 51000000, '2026-12-31', '456 Elm St, Sometown');
-
-INSERT INTO Cart (CustomerID, TotalItems, Total_Price) VALUES
-(50, 3, 600),
-(51, 2, 500);
-
-INSERT INTO Product_In_Cart (CustomerID, ProductID, Quantity, Price) VALUES
-(50, 50, 1, 200),
-(51, 51, 1, 300);
-
-INSERT INTO Service (ServiceID, Type, CustomerID, OrderID, StartTime, EndTime, RepID, Description) VALUES
-(50, 'Return', 50, 50, '2024-04-02 12:00:00', '2024-04-03 12:00:00', 50, 'Return of Product 50'),
-(51, 'Repair', 51, 51, '2024-04-03 14:00:00', '2024-04-04 14:00:00', 51, 'Repair of Product 51');
-
-INSERT INTO Response (ResponseID, Contents, Type, ServiceID, EmployeeID) VALUES
-(50, 'Response for Service 50', 'Email', 50, 50),
-(51, 'Response for Service 51', 'Phone', 51, 51);
-
-INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES
-(50, 'Shipper50', 35, 10, false, '1234567890'),
-(51, 'Shipper51', 40, 15, true, '0987654321');
-
-INSERT INTO Shipping_Detail (TrackingNumber, DriverID, CompanyName, Destination, Estimated_Shipping_TIme, Actual_Estimated_Time, PackageSize, OrderID, CustomerID) VALUES
-(50, 50, 'Shipper50', '789 Pine St, Yourtown', '2024-04-05 10:00:00', '2024-04-05 12:00:00', 3, 50, 50),
-(51, 51, 'Shipper51', '101 Oak St, Mytown', '2024-04-06 11:00:00', '2024-04-06 13:00:00', 2, 51, 51);
-
-
-# 1.1 As a Small Business Seller, I would like to easily list my products with
-# detailed descriptions and images, so that customers can fully understand
-# and appreciate the quality and uniqueness of my offerings.
-INSERT INTO Small_Business_Seller (BusinessID, UserName, PassWord, Email, Profile)
-VALUES (1, 'Alex Rivera', 1234, 'alex.rivera@gmail.com',
-        'I am a small business seller who sells handmade jewelry.
- I have been in business for 5 years and have a passion for creating unique pieces.');
-# 1.2 As a Small Business Seller, I want to access detailed analytics about my sales (the revenue for a specific product)
-INSERT INTO Products
-VALUES (2, 50, 10, 'NonhumanMade Necklace', 'This beautiful necklace is not handcrafted with high-quality materials
-and intricate design details.', 1, 0, 1);
-INSERT INTO Orders
-VALUES (1, 0, '2021-10-01 10:00:00', '2021-10-01 12:00:00', 1);
-INSERT INTO OrderDetails
-VALUES (2, 1, 10);
-UPDATE Orders
-SET Cost = (SELECT sum(od.Quantity * p.Price)
-            FROM OrderDetails od
-                     join Products p on od.ProductID = p.ProductID
-            WHERE od.OrderID = 1)
-WHERE OrderID = 1;
-# 1.3 As a Small Business Seller, I need to be able to manage my
-# inventory efficiently on the platform, so I can ensure that my product
-# listings are always up to date and avoid overselling or stockouts.
-INSERT INTO Products
-VALUES (1, 50, 10, 'Handmade Necklace', 'This beautiful necklace is handcrafted with high-quality materials
-and intricate design details.', 1, 0, 1);
-INSERT INTO OrderDetails
-VALUES (1, 1, 10);
-UPDATE Products
-SET UnitsSold = (SELECT sum(Quantity)
-                 FROM OrderDetails od
-                 Where od.ProductID = 1)
-WHERE ProductID = 1;
-#1.4 As a Small Business Seller, I would like to update my
-# profile to accurately reflect my up-to-date information
-UPDATE Small_Business_Seller
-SET Email   = '123@edu.neu',
-    Profile = 'The Handmade Necklace will not be available in next three weeks since the final exam'
-WHERE BusinessID = 1;
-# 1.5 As a Small Business Seller, I would like to apply for a sale for a specific product.
-UPDATE Products
-SET OnSale = true,
-    Price  = 45
-Where ProductName = 'Handmade Necklace';
-# 2.1 As a customer, I would like to filter products by local small businesses so that I can
-# support my community and find unique, locally-made items.
-INSERT INTO Customers (CustomerID, UserName, PassWord, Email, Address)
-VALUES (1, 'Aayush Bagga', 'password', 'aayush@gmail.com', '360 Huntington Ave, Boston, MA 02115');
-
-
-SELECT *
-FROM Products
-WHERE BusinessID = 1;
-
-
-# 2.2 As a customer, I want to be able to add products that I wish to buy to my cart.
-INSERT INTO Cart (CustomerID, TotalItems, Total_Price)
-VALUES (1, 1, 50);
-
-#2.3 As a customer, I would like to track my order in real-time to know exactly when my items will arrive and plan accordingly and to remember when my order actually was received at my place.
-INSERT INTO Orders
-VALUES (2, 50, '2021-10-01 10:00:00', '360 Huntington Ave, Boston, MA 02115', 1);
-INSERT INTO Shippers
-VALUES ('ShippingButFast', '345 street', 3.0);
-INSERT INTO Drivers
-VALUES (1, 'ShippingButFast', 30, 5, TRUE, '123-456-7890');
-INSERT INTO Customers
-VALUES (4, '123', '456', '678@neu.edu', '123street');
-INSERT INTO Shipping_Detail (TrackingNumber, DriverID, CompanyName, Destination, Estimated_Shipping_TIme,
-                             Actual_Estimated_Time, PackageSize, OrderID, CustomerID)
-VALUES (1, 1, 'ShippingButFast', '360 Huntington Ave, Boston, MA 02115', '2021-10-01 10:00:00', '2021-10-01 12:00:00',
-        1, 1, 4);
-SELECT Shipping_Detail.Estimated_Shipping_TIme
-FROM Shipping_Detail
-WHERE CustomerID = 1;
-SELECT Shipping_Detail.Actual_Estimated_Time
-FROM Shipping_Detail
-WHERE CustomerID = 1;
-
-#2.4 As a customer, I would like to submit my service request for a specific order to address any issues or special requirements directly related to that purchase
-INSERT INTO ServiceRepresentative
-VALUES (123, '12345555', 'bb');
-INSERT INTO Service
-VALUES (1, 'Exchange', 1, 1, '2021-10-01 10:00:00', '2021-10-01 12:00:00', 123,
-        'I want to exchange the products in this order'),
-       (2, 'Repair', 1, 1, '2021-10-01 10:00:00', '2021-10-01 12:00:00', 123,
-        'I want to exchange the products in this order');
-
-#2.5 As a customer, I would like to add different payment methods
-INSERT INTO Card
-VALUES (1, 12345, '2021-10-01', '123 street'),
-       (1, 23456, '2027-10-01', '123 street');
-
-#3.1 As a Customer Service Rep, I need to have access to a
-# comprehensive customer and order database, so I can quickly
-# retrieve information and resolve any issues or inquiries that customers may have.
-INSERT INTO ServiceRepresentative
-VALUES (1, 123456, 'Ali');
-
-INSERT INTO Orders (OrderID, Cost, PlacedTime, Status, ShippingAddress)
-VALUES (3, 50, '2021-10-01 10:00:00', 1, '360 Huntington Ave, Boston, MA 02115');
-
-
-INSERT INTO Card (CustomerID, CardNumber, ExpirationDate, BillingAddress)
-VALUES (1, 0000000000, '2021-10-01 10:00:00', '360 Huntington Ave, Boston, MA 02115')
-;
-
-
-
-INSERT INTO Service
-VALUES (1111, 'Return', 1, 1, '2023-10-01 10:00:00', '2021-10-02 10:00:00', 1, 'i want t0 retur')
-;
-
-
-SELECT Customers.CustomerID, Customers.Address, Customers.Email, Customers.Username
-FROM Customers;
-
-
-SELECT Orders.OrderID, Orders.Status, Orders.ShippingAddress
-FROM Orders;
-
-
-SELECT Card.CardNumber, Card.BillingAddress, Card.ExpirationDate
-FROM Card
-         JOIN Customers ON Card.CustomerID = Customers.CustomerID;
-
-
-SELECT Service.ServiceID, Service.EndTime, Service.StartTime, Service.Type
-FROM Service
-         JOIN Customers ON Service.CustomerID = Customers.CustomerID;
-
-
-
-#3.2 As a Customer Service Rep, I want to resolve customer issues or complaints
-# by providing different services promptly, and maintain high customer satisfaction.
-INSERT INTO Orders (OrderID, Cost, PlacedTime, Status, ShippingAddress)
-VALUES (4, 50, now(), 1, '361 Huntington Ave, Boston, MA 02115');
-
-
-INSERT INTO Orders (OrderID, Cost, PlacedTime, Status, ShippingAddress)
-VALUES (5, 50, now(), 1, '362 Huntington Ave, Boston, MA 02115');
-
-
-INSERT INTO Orders (OrderID, Cost, PlacedTime, Status, ShippingAddress)
-VALUES (6, 50, now(), 1, '363 Huntington Ave, Boston, MA 02115');
-
-
-INSERT INTO Orders (OrderID, Cost, PlacedTime, Status, ShippingAddress)
-VALUES (7, 50, now(), 1, '364 Huntington Ave, Boston, MA 02115');
-
-
-
-INSERT INTO Service
-VALUES (10, 'Repair', 1, 4, NOW(), NOW(), 1, 'I want the Exchange the products');
-
-
-INSERT INTO Service
-VALUES (11, 'Return', 1, 5, NOW(), NOW(), 1, 'I want the Exchange the products');
-
-
-INSERT INTO Service
-VALUES (12, 'Exchange', 1, 6, NOW(), NOW(), 1, 'I want the Exchange the products');
-
-
-INSERT INTO Service
-VALUES (13, 'Other', 1, 7, NOW(), NOW(), 1, 'Discount code: 123');
---11111111122222222
-
-
-SELECT *
-FROM Service
-WHERE Type = 'Repair'
-ORDER BY ServiceID DESC;
-
-SELECT *
-FROM Service
-WHERE Type = 'Return'
-ORDER BY ServiceID DESC;
-
-SELECT *
-FROM Service
-WHERE Type = 'Exchange'
-ORDER BY ServiceID DESC;
-
-SELECT *
-FROM Service
-WHERE Type = 'Other'
-ORDER BY ServiceID DESC;
-
-
-
-#3.3 As a Customer Service Rep, I need to be able to manage and track the status of
-# customer issues, from the initial report to resolution, to ensure that nothing
-# falls through the cracks and customers are kept informed.
-UPDATE Service
-SET EndTime = NOW()
-WHERE OrderID = 4
-  AND Type = 'Repair';
-
-UPDATE Service
-SET EndTime = NOW()
-WHERE OrderID = 5
-  AND Type = 'Return';
-
-UPDATE Service
-SET EndTime = NOW()
-WHERE OrderID = 6
-  AND Type = 'Exchange';
-
-UPDATE Service
-SET EndTime = NOW()
-WHERE OrderID = 7
-  AND Type = 'Other';
-
-#3.4 As a Customer Service Rep, I would need to have access to a customer’s
-# order so I can help the customer to manage
-# any issues related to the order itself (applying discount code/change shipping method/recall a order)
-
-SELECT *
-FROM Orders
-WHERE OrderID = 7;
-
-
-UPDATE Orders
-SET Cost = 40
-Where OrderID = 7;
-
-#3.5As a Customer Service Rep, I need access to resources and product
-# information on the platform, so I can provide accurate and helpful
-# assistance to customers, enhancing their overall experience.
-SELECT *
-FROM OrderDetails od
-         join Orders o on od.OrderID = o.OrderID
-         join Products p on od.ProductID = p.ProductID
-WHERE o.OrderID = 7;
-
-# 4.1 As a driver, I would like to know the years of service I've worked so that I can understand my own experience level and expertise.
-
-INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone)
-VALUES (2, 'ShippingButFast', 30, 5, TRUE, '123-456-7890');
-SELECT Drivers.YearsOfService
-FROM Drivers
-WHERE DRIVERID = 1;
-
-
-# 4.2 As a driver, I want to know new orders that need shipping, including details like package size, and destination, to plan my logistics effectively. (Modified since Phase 1)
-SELECT *
-FROM Shipping_Detail
-WHERE DriverID = 1;
-
-# 4.3 As a driver, I need to be able to easily update the shipping status in order to keep the seller and customer informed about the delivery progress. (Modified since Phase 1)
-UPDATE Orders
-SET Status = 2
-WHERE OrderID = 1;
-
-# 4.4 As a driver, I would like to know the estimated time of arrival for each order so that I can plan my delivery route efficiently.
-SELECT Shipping_Detail.Estimated_Shipping_TIme
-FROM Shipping_Detail
-WHERE DriverID = 1;
+#shippers
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Ankunding, Murray and Romaguera', '6274 Buell Plaza', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Armstrong-Steuber', '56 Caliangt Plaza', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Auer, Renner and Bechtelar', '4827 Crest Line Lane', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Bahringer, Russel and Blanda', '9112 Emmet Road', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Barton and Sons', '19 Florence Pass', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Bechtelar LLC', '40 Kipling Circle', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Brakus-Wisozk', '42 Scott Street', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Buckridge-Kertzmann', '25 Cherokee Road', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Casper-Cremin', '8 Dayton Hill', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Considine-Mante', '8038 Westport Avenue', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Ernser and Sons', '83792 Logan Street', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Feeney, Veum and Wyman', '76 Warrior Street', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Flatley, Ortiz and Yost', '69901 Lillian Crossing', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Frami-Kreiger', '63 Haas Junction', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Frami-Russel', '64 Darwin Trail', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Gerlach LLC', '7455 Vahlen Avenue', 2);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Goodwin-Torp', '9 Bashford Junction', 2);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Goyette LLC', '2 Glendale Drive', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Grady, Kuvalis and Hagenes', '6471 Steensland Place', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Grant-Kohler', '036 Melrose Court', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Hackett Group', '3 Haas Pass', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Harvey LLC', '7 Ramsey Road', 2);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Heathcote Group', '95898 Lindbergh Plaza', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Herman, Kris and Bergstrom', '73811 Stephen Court', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Hilll-Mante', '64689 Caliangt Junction', 2);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Hodkiewicz-Walker', '302 Reinke Street', 2);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Hodkiewicz, Herman and Rowe', '4445 Hermina Circle', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Huel and Sons', '30 Crest Line Parkway', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Kshlerin, Grimes and McDermott', '4482 Thackeray Alley', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Kuphal-Stehr', '8 Calypso Terrace', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Lakin LLC', '949 David Circle', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Larson-Wisoky', '11 Basil Crossing', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Lynch-Carroll', '870 Sundown Junction', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Mertz Inc', '2 Hallows Plaza', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Mitchell-Bergstrom', '426 Waywood Center', 2);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Mohr, Lind and Green', '9660 Cherokee Avenue', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Pouros-Powlowski', '13021 Mayfield Pass', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Rice-Mueller', '6495 Warner Crossing', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Ruecker-King', '49055 Ridgeway Point', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Russel, Wunsch and Durgan', '1 High Crossing Circle', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Schaden-Considine', '6062 Aberg Trail', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Schiller-Botsford', '16 Pond Terrace', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Schmitt-Jacobi', '42591 Thompson Circle', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Shields-Prohaska', '12987 Raven Hill', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Spencer, Terry and Hermann', '953 Scott Place', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Sporer-Gusikowski', '700 Annamark Terrace', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Stamm-Jast', '13000 Loftsgordon Center', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Stiedemann and Sons', '79 Heath Junction', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Terry-Hodkiewicz', '84 Pine View Way', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Torp Group', '8 Dawn Alley', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Torphy Group', '302 Service Center', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Volkman, Larson and Borer', '2712 5th Junction', 1);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Walter-Marvin', '35 Darwin Alley', 4);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Wilkinson, Watsica and McDermott', '336 Holmberg Trail', 3);
+INSERT INTO Shippers (CompanyName, CompanyAddress, Rating) VALUES ('Wyman-O\Conner', '23919 Arkansas Way', 4);
+
+#driver
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (1, 'Goyette LLC', 31, 4, 0, '868-687-7090');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (2, 'Hackett Group', 29, 2, 1, '324-350-0070');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (3, 'Pouros-Powlowski', 50, 1, 0, '997-341-4682');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (4, 'Herman, Kris and Bergstrom', 18, 3, 1, '996-648-4730');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (5, 'Feeney, Veum and Wyman', 47, 5, 0, '369-636-5642');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (6, 'Ruecker-King', 20, 2, 1, '979-183-5784');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (7, 'Terry-Hodkiewicz', 25, 5, 1, '556-615-0144');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (8, 'Hilll-Mante', 18, 3, 1, '814-822-0057');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (9, 'Mertz Inc', 35, 4, 1, '291-265-9428');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (10, 'Casper-Cremin', 45, 1, 1, '959-304-5844');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (11, 'Harvey LLC', 32, 4, 1, '731-262-3576');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (12, 'Barton and Sons', 48, 3, 0, '858-426-1399');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (13, 'Grant-Kohler', 29, 2, 1, '931-519-7860');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (14, 'Schiller-Botsford', 34, 4, 0, '286-171-3998');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (15, 'Lakin LLC', 21, 3, 0, '368-650-0200');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (16, 'Rice-Mueller', 26, 2, 0, '206-837-8880');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (17, 'Schaden-Considine', 47, 2, 1, '581-620-2677');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (18, 'Torphy Group', 49, 1, 0, '304-490-2602');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (19, 'Bahringer, Russel and Blanda', 46, 4, 0, '437-669-7566');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (20, 'Stiedemann and Sons', 19, 4, 1, '181-409-3056');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (21, 'Flatley, Ortiz and Yost', 40, 4, 1, '579-636-8015');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (22, 'Frami-Kreiger', 30, 5, 1, '799-475-3255');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (23, 'Gerlach LLC', 31, 2, 0, '796-528-1380');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (24, 'Frami-Russel', 37, 2, 0, '403-706-5782');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (25, 'Russel, Wunsch and Durgan', 38, 2, 1, '650-908-5641');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (26, 'Hodkiewicz, Herman and Rowe', 34, 3, 1, '404-541-7727');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (27, 'Sporer-Gusikowski', 33, 2, 1, '960-384-7030');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (28, 'Schmitt-Jacobi', 18, 2, 1, '291-428-9949');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (29, 'Wilkinson, Watsica and McDermott', 28, 3, 0, '462-817-9654');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (30, 'Shields-Prohaska', 41, 3, 0, '272-157-5445');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (31, 'Bechtelar LLC', 22, 3, 1, '305-449-5950');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (32, 'Walter-Marvin', 29, 1, 0, '160-600-0844');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (33, 'Kshlerin, Grimes and McDermott', 48, 1, 0, '276-552-4735');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (34, 'Goodwin-Torp', 29, 2, 0, '133-957-0903');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (35, 'Larson-Wisoky', 35, 5, 0, '861-112-7298');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (36, 'Mohr, Lind and Green', 49, 1, 0, '532-410-1996');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (37, 'Lynch-Carroll', 39, 1, 1, '706-585-8441');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (38, 'Torp Group', 42, 4, 0, '857-628-9599');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (39, 'Ernser and Sons', 39, 5, 1, '574-559-7120');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (40, 'Grady, Kuvalis and Hagenes', 33, 2, 0, '354-761-3186');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (41, 'Mitchell-Bergstrom', 40, 3, 0, '832-467-0957');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (42, 'Spencer, Terry and Hermann', 35, 4, 0, '486-876-9016');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (43, 'Kuphal-Stehr', 23, 3, 0, '984-638-9390');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (44, 'Armstrong-Steuber', 37, 4, 1, '847-463-0388');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (45, 'Volkman, Larson and Borer', 35, 5, 1, '182-797-0786');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (46, 'Buckridge-Kertzmann', 48, 1, 0, '913-448-7332');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (47, 'Hodkiewicz-Walker', 43, 2, 0, '877-229-6233');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (48, 'Considine-Mante', 29, 5, 1, '945-347-3489');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (49, 'Heathcote Group', 43, 2, 0, '704-251-5950');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (50, 'Brakus-Wisozk', 20, 1, 1, '516-602-4769');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (51, 'Wyman-O\Conner', 34, 4, 1, '473-294-6597');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (52, 'Auer, Renner and Bechtelar', 42, 4, 0, '663-293-2892');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (53, 'Stamm-Jast', 37, 3, 0, '362-816-0042');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (54, 'Huel and Sons', 25, 2, 0, '270-329-0944');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (55, 'Ankunding, Murray and Romaguera', 46, 2, 0, '681-647-1158');
+INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone) VALUES (56, 'Goyette LLC', 38, 1, 0, '766-544-6743');
+
+#customers
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (1, 'mpiscot0', 'xY1>\'''8|T3}v+@+Y%', 'rbroomer0@merriam-webster.com', '30431 Daystar Alley');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (2, 'xbrookhouse1', 'lT8}gkX5<(a', 'eskelhorn1@cloudflare.com', '72 Eliot Point');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (3, 'cromanet2', 'vV8*J{emkQHLR', 'jbohje2@techcrunch.com', '62800 Northview Place');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (4, 'dportail3', 'cK2.R>7a!|}rt`', 'alimmer3@bizjournals.com', '220 Ilene Center');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (5, 'jcheccuzzi4', 'iX2~f\'Ydbhb', 'amichelet4@bluehost.com', '05316 Northridge Terrace');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (6, 'npeplay5', 'kX6$\\%gs"~TH', 'tterzi5@google.co.uk', '43016 Prentice Court');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (7, 'hdelorenzo6', 'pQ1+v}{/Q~&N', 'etrayton6@hubpages.com', '5 Waxwing Court');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (8, 'ddarlison7', 'xW3}Xsxn', 'cparlet7@cdc.gov', '69 Arkansas Plaza');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (9, 'mgregoraci8', 'dL4@33&61', 'wpiesold8@bizjournals.com', '913 Gina Court');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (10, 'rcalan9', 'bF1#nicXS', 'adidomenico9@europa.eu', '16587 Riverside Court');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (11, 'dbandea', 'wA5.Kktl5', 'rkennicotta@microsoft.com', '7766 Union Pass');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (12, 'zgreserb', 'mH6$.>zS(CGXRT#\\', 'uoldaleb@deviantart.com', '9 Michigan Way');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (13, 'vvasyukhnovc', 'aI0<$*d$JI4', 'mcuttenc@sphinn.com', '6 Messerschmidt Park');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (14, 'kleyninyed', 'sR5(Z!Jc', 'pdyned@rediff.com', '220 Manley Avenue');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (15, 'nbeauvaise', 'dR6%_Zs="', 'dbritlande@wordpress.org', '13947 Independence Court');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (16, 'afairpoolf', 'yR8=k~!c\\psRy@N\'', 'rhewlingsf@i2i.jp', '849 Burrows Circle');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (17, 'dwedong', 'tG8"y_55st=*)ak', 'ctyrwhittg@patch.com', '263 Spohn Park');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (18, 'sclarkinh', 'aE4@E#(}i+w%', 'ffaceyh@ning.com', '245 School Trail');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (19, 'okebelli', 'lR3|(P41jZ0h+xM', 'fpedleri@adobe.com', '820 Hermina Hill');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (20, 'breadmanj', 'kO8<L(Y7nTE2\'7_', 'mdunabiej@woothemes.com', '8853 Mesta Court');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (21, 'bsuccamorek', 'wW7%JWEyaK', 'clittlekitk@chron.com', '66 Ridgeview Alley');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (22, 'remmanuelil', 'mU2/%tjr<Ilhxy', 'sworgenl@marketwatch.com', '65 Drewry Drive');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (23, 'ewoodersonm', 'nH8=E~XUS', 'djirim@hugedomains.com', '5 Pleasure Plaza');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (24, 'bvoasen', 'uO4@WGBxc', 'akleynenn@xinhuanet.com', '55010 Hollow Ridge Park');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (25, 'prexo', 'cU8=zzX2kDvWFf,8', 'ncalveyo@theatlantic.com', '8110 Riverside Crossing');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (26, 'aargentp', 'gM1>(whJv', 'sflipsp@cbslocal.com', '597 Ludington Alley');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (27, 'qmalletrattq', 'lZ9,8@SxW_k', 'rtomasiq@plala.or.jp', '00374 Bluestem Hill');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (28, 'lcaveaur', 'pT1=`Z+)6R', 'ljakucewiczr@ovh.net', '59528 Trailsway Pass');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (29, 'eboyns', 'hH7%60E"', 'kstitsons@netlog.com', '4 Sauthoff Hill');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (30, 'rvanarsdallt', 'iU1%wyVqzH(o?*mT', 'tneaglet@booking.com', '619 Dawn Junction');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (31, 'rgrunbaumu', 'fK6<Wq%&', 'sdennesu@psu.edu', '729 Ridge Oak Way');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (32, 'eswansonv', 'tY3,Ih)2fDR', 'mgrahlv@utexas.edu', '89367 Eagan Place');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (33, 'lsenchenkow', 'zU0?cL(kP0tV9#(j', 'rbassamw@exblog.jp', '17408 Loftsgordon Alley');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (34, 'kalgorex', 'tA7|~b.=H', 'evanarsdalenx@wunderground.com', '10425 Orin Road');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (35, 'gmangeony', 'nF0|hRee5k"Ne', 'mpricketty@blogs.com', '82296 Fallview Plaza');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (36, 'cmatejicz', 'zO8<UABpn3', 'frousellz@trellian.com', '2 Vahlen Point');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (37, 'ccowdry10', 'cV9\\0qOcsz&BvF(', 'iludy10@wufoo.com', '05754 Milwaukee Crossing');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (38, 'vmaciver11', 'zH1}E\\d~f\\uagM', 'hewan11@vinaora.com', '3492 Truax Trail');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (39, 'agres12', 'mV6{.rNqH_', 'cdonnersberg12@techcrunch.com', '6 Heffernan Parkway');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (40, 'fmatteoni13', 'fT9/3=Lo', 'fdeclerc13@macromedia.com', '313 South Alley');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (41, 'dantonioni14', 'tZ7`2giK))b%u1!r', 'jleser14@clickbank.net', '1 Sundown Road');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (42, 'bgoroni15', 'tY4=|B(6dx+j1c@4', 'odury15@tripod.com', '084 Ramsey Street');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (43, 'ndy16', 'dY4=oslm\'%', 'gbennington16@virginia.edu', '03008 Bellgrove Road');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (44, 'jangliss17', 'wI3=14!7m', 'tcrab17@wikimedia.org', '52 Union Drive');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (45, 'kbarter18', 'nY4|FC$_Pt=2(2', 'acolombier18@bluehost.com', '93901 Blackbird Plaza');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (46, 'pfleckness19', 'gA6}h7xJUqR', 'severly19@theguardian.com', '7 Melvin Plaza');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (47, 'arosenshine1a', 'iX2<@uW=RTi@{', 'mgreenly1a@cyberchimps.com', '5 Dakota Center');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (48, 'lsabate1b', 'lO5)_?}d5~', 'ashemmans1b@weibo.com', '614 Ruskin Avenue');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (49, 'mmatthias1c', 'zV0@M12|(', 'tharpin1c@typepad.com', '4 Independence Circle');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (50, 'pternouth1d', 'zV6)Yb+>>LSjl=', 'mmonnelly1d@liveinternet.ru', '3981 Mitchell Road');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (51, 'wpenwell1e', 'hO2<|tw2Bq', 'bflintuff1e@techcrunch.com', '08447 Declaration Junction');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (52, 'aleech1f', 'iE3=@ELp@!1#l~', 'kbotfield1f@pen.io', '441 Menomonie Trail');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (53, 'rsoppit1g', 'wX8~LOhMu?_XJi', 'fllywarch1g@prnewswire.com', '4981 Macpherson Avenue');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (54, 'drayman1h', 'uT0+dGYpcrEs>Nr', 'astroband1h@utexas.edu', '0 Oriole Plaza');
+INSERT INTO commerce.Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (55, 'ajoan1i', 'oW3=73SfhNzhH', 'kcolvine1i@amazonaws.com', '1 Lyons Point');
