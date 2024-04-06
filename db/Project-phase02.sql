@@ -495,6 +495,7 @@ FROM OrderDetails od
 WHERE o.OrderID = 7;
 
 # 4.1 As a driver, I would like to know the years of service I've worked so that I can understand my own experience level and expertise.
+
 INSERT INTO Drivers (DriverID, CompanyName, Age, YearsOfService, DriverLicenseExpiration, Phone)
 VALUES (2, 'ShippingButFast', 30, 5, TRUE, '123-456-7890');
 SELECT Drivers.YearsOfService
