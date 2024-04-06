@@ -425,7 +425,7 @@ VALUES (12, 'Exchange', 1, 6, NOW(), NOW(), 1, 'I want the Exchange the products
 
 INSERT INTO Service
 VALUES (13, 'Other', 1, 7, NOW(), NOW(), 1, 'Discount code: 123');
---111111111
+--11111111122222222
 
 
 SELECT *
