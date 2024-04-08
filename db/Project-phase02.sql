@@ -187,33 +187,33 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
         on update cascade on delete restrict
 );
 
-CREATE TRIGGER cost_update AFTER update on OrderDetails
-    FOR EACH ROW
-    BEGIN
-        DECLARE total_cost int default 0;
-        SELECT SUM(p.Price * od.Quantity) INTO total_cost
-        FROM Orders o join OrderDetails OD on o.OrderID = OD.OrderID
-        join Products P on P.ProductID = OD.ProductID
-        WHERE od.OrderID = NEW.OrderID;
-        UPDATE Orders
-        SET Cost = total_cost
-        WHERE OrderID = NEW.OrderID;
-    end;
+CREATE TRIGGER cost_update AFTER INSERT ON OrderDetails
+FOR EACH ROW
+BEGIN
+    DECLARE total_cost INT DEFAULT 0;
+    SELECT SUM(Products.Price * NEW.Quantity) INTO total_cost
+    FROM OrderDetails
+    JOIN Products ON Products.ProductID = OrderDetails.ProductID
+    WHERE OrderDetails.OrderID = NEW.OrderID;
+    UPDATE Orders
+    SET Cost = total_cost
+    WHERE OrderID = NEW.OrderID;
+END;
 
-CREATE TRIGGER sold_update AFTER update on OrderDetails
+CREATE TRIGGER sold_update AFTER INSERT on OrderDetails
     FOR EACH ROW
     BEGIN
         DECLARE total_sold int default 0;
-        SELECT SUM(od.Quantity) INTO total_sold
+        SELECT SUM(OD.Quantity) INTO total_sold
         FROM Orders o join OrderDetails OD on o.OrderID = OD.OrderID
         join Products P on P.ProductID = OD.ProductID
-        WHERE od.ProductID = NEW.ProductID;
+        WHERE OD.ProductID = NEW.ProductID;
         UPDATE Products
         SET  UnitsSold = total_sold
         WHERE ProductID = NEW.ProductID;
     end;
 
-CREATE TRIGGER Check_Quantity_Before_Insert_Update BEFORE INSERT  ON OrderDetails
+CREATE TRIGGER Check_Quantity_Before_Insert_Update BEFORE INSERT ON OrderDetails
 FOR EACH ROW
 BEGIN
     DECLARE stock INT;
