@@ -12,7 +12,6 @@ customers = Blueprint('customers', __name__)
 # Get all customers from the DB
 @customers.route('/customers', methods=['GET'])
 def get_customers():
-    print("Reached GET")
     cursor = db.get_db().cursor()
     cursor.execute('select CustomerID, UserName, PassWord,\
         Email, Address from Customers')
@@ -38,7 +37,11 @@ def update_customer():
     email = cust_info['Email']
     address = cust_info['Address']
     
-    query = 'UPDATE customers SET UserName = %s, PassWord = %s, Email = %s, Address = %s where id = %s'
+    query = '''
+    UPDATE Customers 
+    SET UserName = %s, PassWord = %s, Email = %s, Address = %s 
+    WHERE CustomerID = %s
+    '''
     data = (username, password,email,address,cust_id)
     cursor = db.get_db().cursor()
     r = cursor.execute(query,data)
@@ -50,7 +53,7 @@ def update_customer():
 @customers.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from customers where id = {0}'.format(userID))
+    cursor.execute('select * from Customers where CustomerID = {0}'.format(userID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -61,11 +64,91 @@ def get_customer(userID):
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get representative assigned to the customer
-@customers.route('/customers/rep/<ID>', methods=['GET'])
-def get_customer_rep_info(userID):
+# Get customer detail for customer with particular userID
+@customers.route('/customers/cart/<id>', methods=['GET'])
+def get_customer_cart(id):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from customers where id = {0}'.format(userID))
+    cursor.execute('''
+                   SELECT * FROM 
+                   Customers NATURAL JOIN Cart
+                   WHERE Customer.CustomerID = {0}
+                   '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# Get cart detail for customer with particular userID
+@customers.route('/customers/cart/<id>', methods=['GET'])
+def get_customer_cart(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                   SELECT * FROM 
+                   Customers NATURAL JOIN Cart
+                   WHERE Customer.CustomerID = {0}
+                   '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# Get card detail for customer with particular userID
+@customers.route('/customers/card/<id>', methods=['GET'])
+def get_customer_card(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                   SELECT * FROM 
+                   Customers NATURAL JOIN Card
+                   WHERE Customer.CustomerID = {0}
+                   '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# Get shipping detail for customer with particular userID
+@customers.route('/customers/shipping/<id>', methods=['GET'])
+def get_customer_shipments(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                   SELECT Destination, Estimated_Shipping_Time, Actual_Shipping_Time, PackageSize
+                   FROM Customers NATURAL JOIN Shipping_Detail
+                   WHERE Customer.CustomerID = {0}
+                   '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# Get orders detail for customer with particular userID
+@customers.route('/customers/orders/<id>', methods=['GET'])
+def get_customer_orders(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                   SELECT Status, Cost, PlacedTime 
+                   FROM Customers NATURAL JOIN Shipping_Detail NATURAL JOIN Orders
+                   WHERE Customer.CustomerID = {0}
+                   '''.format(id))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
