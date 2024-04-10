@@ -39,7 +39,13 @@ def get_cart():
 @cart.route('/cart/<id>', methods=['GET'])
 def get_cart_detail (id):
 
-    query = 'SELECT * FROM Cart WHERE CustomerID = ' + str(id)
+    query = '''SELECT Products.ProductID, Products.Price, ProductName,
+    ProductDescription, BusinessID, OnSale 
+    FROM Cart JOIN Product_In_Cart 
+    ON Cart.CustomerID = Product_In_Cart.CustomerID
+    JOIN Products 
+    ON Product_In_Cart.ProductID = Products.ProductID
+    WHERE CustomerID = ''' + str(id)
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
@@ -50,4 +56,4 @@ def get_cart_detail (id):
     for row in the_data:
         json_data.append(dict(zip(column_headers, row)))
     return jsonify(json_data)
-    
+

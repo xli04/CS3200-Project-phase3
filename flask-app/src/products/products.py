@@ -17,7 +17,7 @@ def get_products():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM products')
+    cursor.execute('SELECT * FROM Products')
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -37,9 +37,9 @@ def get_products():
     return jsonify(json_data)
 
 @products.route('/product/<id>', methods=['GET'])
-def get_product_detail (id):
+def get_product_detail(id):
 
-    query = 'SELECT * FROM products WHERE ProductID = ' + str(id)
+    query = 'SELECT * FROM Products WHERE ProductID = ' + str(id)
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
@@ -51,34 +51,50 @@ def get_product_detail (id):
         json_data.append(dict(zip(column_headers, row)))
     return jsonify(json_data)
     
+# Get products on sale
+@products.route('/product/onsale/<id>', methods=['GET'])
+def get_product_detail_onsale(id):
 
-# @products.route('/product', methods=['POST'])
-# def add_new_product():
+    query = '''SELECT * 
+    FROM Products WHERE ProductID = ''' + str(id)
+    current_app.logger.info(query)
+
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    column_headers = [x[0] for x in cursor.description]
+    json_data = []
+    the_data = cursor.fetchall()
+    for row in the_data:
+        json_data.append(dict(zip(column_headers, row)))
+    return jsonify(json_data)
+
+@products.route('/product', methods=['POST'])
+def add_new_product():
     
-#     # collecting data from the request object 
-#     the_data = request.json
-#     current_app.logger.info(the_data)
+    # collecting data from the request object 
+    the_data = request.json
+    current_app.logger.info(the_data)
 
-#     #extracting the variable
-#     name = the_data['product_name']
-#     description = the_data['product_description']
-#     price = the_data['product_price']
-#     category = the_data['product_category']
+    #extracting the variable
+    name = the_data['product_name']
+    description = the_data['product_description']
+    price = the_data['product_price']
+    category = the_data['product_category']
 
-#     # Constructing the query
-#     query = 'insert into products (product_name, description, category, list_price) values ("'
-#     query += name + '", "'
-#     query += description + '", "'
-#     query += category + '", '
-#     query += str(price) + ')'
-#     current_app.logger.info(query)
+    # Constructing the query
+    query = 'insert into products (product_name, description, category, list_price) values ("'
+    query += name + '", "'
+    query += description + '", "'
+    query += category + '", '
+    query += str(price) + ')'
+    current_app.logger.info(query)
 
-#     # executing and committing the insert statement 
-#     cursor = db.get_db().cursor()
-#     cursor.execute(query)
-#     db.get_db().commit()
+    # executing and committing the insert statement 
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
     
-#     return 'Success!'
+    return 'Success!'
 
 # ### Get all product categories
 # @products.route('/categories', methods = ['GET'])
