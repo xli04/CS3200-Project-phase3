@@ -70,8 +70,6 @@ def update_customer():
     db.get_db().commit()
     return 'customer updated!'
 
-
-# Get customer detail for customer with particular userID
 @customers.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
     cursor = db.get_db().cursor()
@@ -86,7 +84,6 @@ def get_customer(userID):
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get customer detail for customer with particular userID
 @customers.route('/customers/<userID>', methods=['DELETE'])
 def delete_customer(userID):
     cursor = db.get_db().cursor()
@@ -108,8 +105,8 @@ def delete_customer(userID):
 def get_customer_cart(id):
     cursor = db.get_db().cursor()
     cursor.execute('''
-                   SELECT * FROM 
-                   Customers NATURAL JOIN Cart
+                   SELECT Customers.UserName AS Customer_Name, Products.*, Cart.*
+                   FROM Cart NATURAL JOIN Product_In_Cart NATURAL JOIN Products
                    WHERE Customers.CustomerID = {0}
                    '''.format(id))
     row_headers = [x[0] for x in cursor.description]
