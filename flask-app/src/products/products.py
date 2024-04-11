@@ -52,11 +52,14 @@ def get_product_detail(id):
     return jsonify(json_data)
     
 # Get products on sale
-@products.route('/product/onsale/<id>', methods=['GET'])
-def get_product_detail_onsale(id):
+@products.route('/products/onsale', methods=['GET'])
+def get_product_detail_onsale():
 
-    query = '''SELECT * 
-    FROM Products WHERE ProductID = ''' + str(id)
+    query = '''
+    SELECT * 
+    FROM Products 
+    WHERE OnSale = 1
+    '''
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
@@ -76,45 +79,80 @@ def add_new_product():
     current_app.logger.info(the_data)
 
     #extracting the variable
-    name = the_data['product_name']
-    description = the_data['product_description']
-    price = the_data['product_price']
-    category = the_data['product_category']
+    product_id = the_data['ProductID']
+    product_name = the_data['ProductName']
+    price = the_data['Price']
+    units_in_stock = the_data['UnitsInStock']
+    description = the_data['ProductionDescription']
+    units_sold = the_data['UnitsSold']
+    on_sale = the_data['OnSale']
 
     # Constructing the query
-    query = 'insert into products (product_name, description, category, list_price) values ("'
-    query += name + '", "'
-    query += description + '", "'
-    query += category + '", '
-    query += str(price) + ')'
+    query = '''
+    INSERT INTO PRODUCTS(ProductName, Price, UnitsInStock, ProductionDescription, UnitsSold, OnSale)
+    VALUES (%s, %s, %s, %s, %s, %s)    
+    '''
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
     cursor = db.get_db().cursor()
-    cursor.execute(query)
+    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale, product_id))
     db.get_db().commit()
     
     return 'Success!'
 
-# ### Get all product categories
-# @products.route('/categories', methods = ['GET'])
-# def get_all_categories():
-#     query = '''
-#         SELECT DISTINCT category AS label, category as value
-#         FROM products
-#         WHERE category IS NOT NULL
-#         ORDER BY category
-#     '''
-
-#     cursor = db.get_db().cursor()
-#     cursor.execute(query)
-
-#     json_data = []
-#     # fetch all the column headers and then all the data from the cursor
-#     column_headers = [x[0] for x in cursor.description]
-#     theData = cursor.fetchall()
-#     # zip headers and data together into dictionary and then append to json data dict.
-#     for row in theData:
-#         json_data.append(dict(zip(column_headers, row)))
+@products.route('/product/<id>', methods=['PUT'])
+def update_product(id):
     
-#     return jsonify(json_data)
+    # collecting data from the request object 
+    the_data = request.json
+    current_app.logger.info(the_data)
+
+    #extracting the variable
+    # product_id = the_data['ProductID']
+    price = the_data['Price']
+    units_in_stock = the_data['UnitsInStock']
+    product_name = the_data['ProductName']
+    description = the_data['ProductionDescription']
+    units_sold = the_data['UnitsSold']
+    on_sale = the_data['OnSale']
+    
+    # Constructing the query
+    query = f"""
+        UPDATE Products
+        SET ProductName = %s,
+            Price = %s,
+            UnitsInStock = %s,
+            ProductDescription = %s,
+            UnitsSold = %s,
+            OnSale = %s
+        WHERE ProductID = {id}
+    """
+    
+    current_app.logger.info(query)
+
+    # executing and committing the insert statement 
+    cursor = db.get_db().cursor()
+    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale))
+    db.get_db().commit()
+    
+    return 'Success!'
+
+
+@products.route('/product/<id>', methods=['DELETE'])
+def delete_product(id):
+
+    query = '''
+    DELETE FROM Products
+    WHERE ProductID = 
+    ''' + str(id)
+    current_app.logger.info(query)
+
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    column_headers = [x[0] for x in cursor.description]
+    json_data = []
+    the_data = cursor.fetchall()
+    for row in the_data:
+        json_data.append(dict(zip(column_headers, row)))
+    return f'Product {id} was deleted :O'
