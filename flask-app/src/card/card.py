@@ -52,7 +52,7 @@ def get_card_detail (id):
     return jsonify(json_data)
 
 @card.route('/card/<id>', methods=['DELETE'])
-def get_card_detail (id):
+def delete_card_detail (id):
 
     query = 'DELETE FROM Card WHERE CardNumber = ' + str(id)
     current_app.logger.info(query)
@@ -68,7 +68,7 @@ def get_card_detail (id):
     
 # Gets all the cards from this customer
 @card.route('/card/customer/<id>', methods=['GET'])
-def get_card_detail (id):
+def get_card_detail_customer (id):
 
     query = '''SELECT * 
     FROM Card NATURAL JOIN Customers

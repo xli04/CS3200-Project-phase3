@@ -12,7 +12,7 @@ orders = Blueprint('orders', __name__)
 
 # Get all the orders from the database
 @orders.route('/order', methods=['GET'])
-def get_orders():
+def get_all_orders():
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
@@ -37,7 +37,7 @@ def get_orders():
     return jsonify(json_data)
 
 @orders.route('/order/<id>', methods=['GET'])
-def get_order_detail (id):
+def get_order (id):
 
     query = 'SELECT OrderID, Cost, PlacedTime, Status FROM Orders WHERE OrderID = ' + str(id)
     current_app.logger.info(query)
