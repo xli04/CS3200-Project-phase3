@@ -51,13 +51,19 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
     app.register_blueprint(customers,   url_prefix='/c')
+    app.register_blueprint(card,   url_prefix='/card')
     app.register_blueprint(cart,   url_prefix='/cart')
-    app.register_blueprint(products,    url_prefix='/p')
-    app.register_blueprint(shippers,    url_prefix='/s')
-    app.register_blueprint(orders,    url_prefix='/o')
-    app.register_blueprint(sbs,    url_prefix='/sbs')
     app.register_blueprint(drivers,    url_prefix='/d')
+    app.register_blueprint(orders,    url_prefix='/o')
+    app.register_blueprint(orderdetails,    url_prefix='/od')
+    app.register_blueprint(products,    url_prefix='/p')
+    app.register_blueprint(pic,    url_prefix='/pic')
+    app.register_blueprint(response,    url_prefix='/r')
     app.register_blueprint(rep,    url_prefix='/rep')
+    app.register_blueprint(shippers,    url_prefix='/shippers')
+    app.register_blueprint(service,    url_prefix='/service')
+    app.register_blueprint(sd,    url_prefix='/sd')
+    app.register_blueprint(sbs,    url_prefix='/sbs')
 
     # Don't forget to return the app object
     return app

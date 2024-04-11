@@ -51,3 +51,23 @@ def get_rep_detail (id):
         json_data.append(dict(zip(column_headers, row)))
     return jsonify(json_data)
     
+
+# Get product detail for owners with particular businessID
+@rep.route('/rep/response/<id>', methods=['GET'])
+def get_rep_responses(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                   SELECT Response.Contents, Response.Type AS ResponseType, Service.Type AS ServiceType,
+                   Description, StartTime, EndTime  
+                   FROM Service NATURAL JOIN Response
+                   WHERE Response.RepID  = {0}
+                   '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response

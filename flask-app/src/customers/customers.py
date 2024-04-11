@@ -146,7 +146,7 @@ def get_customer_orders(id):
     cursor = db.get_db().cursor()
     cursor.execute('''
                    SELECT Status, Cost, PlacedTime 
-                   FROM Customers NATURAL JOIN Shipping_Detail NATURAL JOIN Orders
+                   FROM Shipping_Detail NATURAL JOIN Orders
                    WHERE Customer.CustomerID = {0}
                    '''.format(id))
     row_headers = [x[0] for x in cursor.description]
