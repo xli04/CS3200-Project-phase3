@@ -40,12 +40,12 @@ def get_cart():
 def get_cart_detail (id):
 
     query = '''SELECT Products.ProductID, Products.Price, ProductName,
-    ProductDescription, BusinessID, OnSale 
+    ProductionDescription,BusinessID, OnSale 
     FROM Cart JOIN Product_In_Cart 
     ON Cart.CustomerID = Product_In_Cart.CustomerID
     JOIN Products 
     ON Product_In_Cart.ProductID = Products.ProductID
-    WHERE CustomerID = ''' + str(id)
+    WHERE Cart.CustomerID = ''' + str(id)
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
