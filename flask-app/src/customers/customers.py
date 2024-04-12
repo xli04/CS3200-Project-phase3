@@ -50,10 +50,9 @@ def add_customer():
 
 
 @customers.route('/customers/<id>',methods=['PUT'])
-def update_customer():
+def update_customer(id):
     cust_info = request.json
     # current_app.logger.infor(cust_info)
-    cust_id = cust_info['CustomerID']
     username = cust_info['UserName']
     password = cust_info['PassWord']
     email = cust_info['Email']
@@ -64,7 +63,7 @@ def update_customer():
     SET UserName = %s, PassWord = %s, Email = %s, Address = %s 
     WHERE CustomerID = %s
     '''
-    data = (username, password,email,address,cust_id)
+    data = (username, password,email,address,id)
     cursor = db.get_db().cursor()
     r = cursor.execute(query,data)
     db.get_db().commit()
