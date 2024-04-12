@@ -51,11 +51,11 @@ def add_customer():
 
 @customers.route('/customers_put',methods=['PUT'])
 def update_customer():
-    cust_info = request.json()
+    cust_info = request.json
     # current_app.logger.infor(cust_info)
-    id = cust_info['Customer ID']
-    username = cust_info['User Name']
-    password = cust_info['Pass Word']
+    id = cust_info['CustomerID']
+    username = cust_info['UserName']
+    password = cust_info['PassWord']
     email = cust_info['Email']
     address = cust_info['Address']
     query = '''
