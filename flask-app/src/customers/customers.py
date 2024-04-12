@@ -155,6 +155,22 @@ def get_customer_card(id):
     
     return the_response
 
+@customers.route('/customers/card', methods=['POST'])
+def add_customer_card():
+    cursor = db.get_db().cursor()
+    card_info = request.json()
+        # current_app.logger.infor(cust_info)
+    card_number = card_info['CardNumber']
+    cus_id = card_info['CustomerID']
+    exp_date = card_info['ExpirationDate']
+    billing_address = card_info['BillingAddress']
+    cursor.execute('''
+                    INSERT INTO Card (CardNumber, CustomerID, ExpirationDate, BillingAddress)
+                    VALUE (%s, %s, %s, %s)
+                    ''',(card_number,cus_id,exp_date,billing_address))
+    db.get_db().commit()
+    return 'added'
+
 @customers.route('/customers/cards/<customer_id>/<card_number>', methods=['PUT', 'DELETE'])
 def handle_customer_card(customer_id, card_number):
     cursor = db.get_db().cursor()
