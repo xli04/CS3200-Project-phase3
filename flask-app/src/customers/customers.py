@@ -186,22 +186,16 @@ def put_customer_card(customer_id, card_number):
 def delete_customer_card(customer_id, card_number):
     cursor = db.get_db().cursor()
 
+    print('???')
         # Delete the card with the given card number
     cursor.execute('''
         DELETE FROM Card
         WHERE CardNumber = %s AND CustomerID = %s
         ''', (card_number, customer_id))
         
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    the_data = cursor.fetchall()
-    for row in the_data:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
+   
     db.get_db().commit()
-    return the_response
+    return "success"
 
 # Get shipping detail for customer with particular userID
 @customers.route('/customers/shipping/<id>', methods=['GET'])
