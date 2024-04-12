@@ -121,18 +121,62 @@ def get_customer_cart(id):
 
 
 # Get card detail for customer with particular userID
-@customers.route('/customers/card/<id>', methods=['GET'])
+@customers.route('/customers/card/<id>', methods=['GET','POST'])
 def get_customer_card(id):
     cursor = db.get_db().cursor()
-    cursor.execute('''
-                   SELECT * FROM 
-                   Customers NATURAL JOIN Card
-                   WHERE Customers.CustomerID = {0}
-                   '''.format(id))
+    if request.method == 'GET':
+        cursor.execute('''
+                    SELECT * 
+                    FROM Customers NATURAL JOIN Card
+                    WHERE Customers.CustomerID = {0}
+                    '''.format(id))
+    elif request.method == 'POST':
+        card_info = request.json
+        # current_app.logger.infor(cust_info)
+        card_number = card_info['CardNumber']
+        cus_id = card_info['CustomerID']
+        exp_date = card_info['ExpirationDate']
+        billing_address = card_info['BillingAddress']
+        cursor.execute('''
+                    INSERT INTO Card (CardNumber, CustomerID, ExpirationDate, BillingAddress)
+                    VALUE (%s, %s, %s, %s)
+                    ''',(card_number,id,exp_date,billing_address))
+        
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
     for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+@customers.route('/customers/cards/<customer_id>/<card_number>', methods=['PUT', 'DELETE'])
+def handle_customer_card(customer_id, card_number):
+    cursor = db.get_db().cursor()
+    if request.method == 'PUT':
+        # Update the card details for the given card number
+        card_info = request.json
+        exp_date = card_info['ExpirationDate']
+        billing_address = card_info['BillingAddress']
+        cursor.execute('''
+            UPDATE Card
+            SET ExpirationDate = %s, BillingAddress = %s
+            WHERE CardNumber = %s AND CustomerID = %s
+            ''', (exp_date, billing_address, card_number, customer_id))
+        
+    elif request.method == 'DELETE':
+        # Delete the card with the given card number
+        cursor.execute('''
+            DELETE FROM Card
+            WHERE CardNumber = %s AND CustomerID = %s
+            ''', (card_number, customer_id))
+        
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    the_data = cursor.fetchall()
+    for row in the_data:
         json_data.append(dict(zip(row_headers, row)))
     the_response = make_response(jsonify(json_data))
     the_response.status_code = 200
@@ -159,14 +203,37 @@ def get_customer_shipments(id):
     return the_response
 
 # Get orders detail for customer with particular userID
-@customers.route('/customers/orders/<id>', methods=['GET'])
+@customers.route('/customers/orders/<id>', methods=['GET', 'POST'])
 def get_customer_orders(id):
     cursor = db.get_db().cursor()
-    cursor.execute('''
-                   SELECT Status, Cost, PlacedTime 
-                   FROM Shipping_Detail NATURAL JOIN Orders
-                   WHERE Customers.CustomerID = {0}
-                   '''.format(id))
+    
+    if request.method == 'GET':
+        cursor.execute('''
+                    SELECT Status, Cost, PlacedTime 
+                    FROM Shipping_Detail NATURAL JOIN Orders
+                    WHERE Customers.CustomerID = {0}
+                    '''.format(id))
+    elif request.method == 'POST':
+        # collecting data from the request object 
+        the_data = request.json
+
+        #extracting the variable
+        orderId = the_data['OrderID']
+        cost = the_data['Cost']
+        placedTime = the_data['PlacedTime']
+        status = the_data['Status']
+        address = the_data['ShippingAddress']
+
+        # Constructing the query
+        query = 'insert into Orders (CompanyName, Rating, CompanyAddress) values ("'
+        query += orderId + '", "'
+        query += cost + '", '
+        query += placedTime + '", '
+        query += status + '", '
+        query += address + ')'
+        
+        cursor.execute(query)
+        
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()

@@ -33,12 +33,15 @@ def create_app():
         return "<h1>Welcome to the 3200 boilerplate app</h1>"
 
     # Import the various Beluprint Objects
-    from src.card.card import card
-    from src.cart.cart import cart
+    
+    # All the commented out ones are the ones I deleted
+    
+    # from src.card.card import card
+    # from src.cart.cart import cart
     from src.customers.customers import customers
     from src.drivers.drivers import drivers
-    from src.orderdetails.orderdetails import orderdetails
-    from src.orders.orders import orders
+    # from src.orderdetails.orderdetails import orderdetails
+    # from src.orders.orders import orders
     from src.products.products  import products
     from src.product_in_cart.product_in_cart  import pic
     from src.response.response import response
@@ -51,11 +54,11 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
     app.register_blueprint(customers,   url_prefix='/c')
-    app.register_blueprint(card,   url_prefix='/card')
-    app.register_blueprint(cart,   url_prefix='/cart')
+    # app.register_blueprint(card,   url_prefix='/card')
+    # app.register_blueprint(cart,   url_prefix='/cart')
     app.register_blueprint(drivers,    url_prefix='/d')
-    app.register_blueprint(orders,    url_prefix='/o')
-    app.register_blueprint(orderdetails,    url_prefix='/od')
+    # app.register_blueprint(orders,    url_prefix='/o')
+    # app.register_blueprint(orderdetails,    url_prefix='/od')
     app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(pic,    url_prefix='/pic')
     app.register_blueprint(response,    url_prefix='/r')

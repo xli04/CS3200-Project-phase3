@@ -53,7 +53,7 @@ def get_rep_detail (id):
     
 
 # Get product detail for owners with particular businessID
-@rep.route('/rep/response/<id>', methods=['GET'])
+@rep.route('/rep/all_services/<id>', methods=['GET'])
 def get_rep_responses(id):
     cursor = db.get_db().cursor()
     cursor.execute('''
@@ -62,6 +62,59 @@ def get_rep_responses(id):
                    FROM Service NATURAL JOIN Response
                    WHERE Response.RepID  = {0}
                    '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+
+
+# Gets that specific service
+@rep.route('/rep/service/<service_id>/', methods=['GET','PUT', 'DELETE'])
+def handle_rep_response(service_id):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    
+    if request.method == 'GET':
+        
+        cursor.execute(f'''
+                       SELECT *
+                       FROM Service
+                       WHERE ServiceID = ${service_id}
+                       ''')
+        pass
+    elif request.method == 'PUT':
+        # Update the service details
+        service_info = request.json
+        service_type = service_info['Type']
+        order_id = service_info['OrderID']
+        start_time = service_info['StartTime']
+        end_time = service_info['EndTime']
+        description = service_info['Description']
+        
+        # Construct the UPDATE query
+        update_query = '''
+                       UPDATE Service
+                       SET Type = %s, OrderID = %s, StartTime = %s, EndTime = %s, Description = %s
+                       WHERE ServiceID = %s
+                       '''
+        cursor.execute(update_query, (service_type, order_id, start_time, end_time, description, service_id))
+        
+        
+    elif request.method == 'DELETE':
+        cursor.execute(f'''
+                       DELETE 
+                       FROM Service
+                       WHERE ServiceID = ${service_id}
+                       ''')
+        pass
+
+    
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
