@@ -107,7 +107,7 @@ def get_customer_cart(id):
     cursor.execute('''
                    SELECT Customers.UserName AS Customer_Name, Products.*, Cart.*
                    FROM Cart NATURAL JOIN Product_In_Cart NATURAL JOIN Products
-                   WHERE Customers.CustomerID = {0}
+                   WHERE Cart.CustomerID = {0}
                    '''.format(id))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
