@@ -11,13 +11,27 @@ CREATE Table IF NOT EXISTS Small_Business_Seller
     PRIMARY KEY (BusinessID)
 );
 
+CREATE TABLE IF NOT EXISTS Customers
+(
+    CustomerID int          NOT NULL AUTO_INCREMENT,
+    UserName   varchar(50)  NOT NULL,
+    PassWord   varchar(50)  NOT NULL,
+    Email      varchar(50)  NOT NULL,
+    Address    varchar(100) NOT NULL,
+    PRIMARY KEY (CustomerID)
+);
+
 CREATE TABLE IF NOT EXISTS Orders
 (
     OrderID         int          NOT NULL AUTO_INCREMENT,
     Cost            int          NOT NULL,
     PlacedTime      datetime     NOT NULL,
     Status          int          NOT NULL,
-    PRIMARY KEY (OrderID)
+    CustomerID       int          NOT NULL,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT fk_40 FOREIGN KEY (CustomerID)
+        REFERENCES Customers (CustomerID)
+        on update cascade on delete restrict
 );
 
 
@@ -36,18 +50,6 @@ CREATE TABLE IF NOT EXISTS Products
         REFERENCES Small_Business_Seller (BusinessID)
         on update cascade on delete restrict
 );
-
-
-CREATE TABLE IF NOT EXISTS Customers
-(
-    CustomerID int          NOT NULL AUTO_INCREMENT,
-    UserName   varchar(50)  NOT NULL,
-    PassWord   varchar(50)  NOT NULL,
-    Email      varchar(50)  NOT NULL,
-    Address    varchar(100) NOT NULL,
-    PRIMARY KEY (CustomerID)
-);
-
 
 CREATE TABLE IF NOT EXISTS Shippers
 (
@@ -113,10 +115,10 @@ CREATE TABLE IF NOT EXISTS Product_In_Cart
     PRIMARY KEY (CustomerID, ProductID),
     CONSTRAINT fk_01
         FOREIGN KEY (CustomerID) REFERENCES Cart (CustomerID)
-            on update cascade on delete restrict,
+            on update cascade,
     CONSTRAINT fk_02
         FOREIGN KEY (ProductID) REFERENCES Products (ProductID)
-            on update cascade on delete restrict
+            on update cascade
 );
 
 CREATE TABLE IF NOT EXISTS Service
@@ -425,61 +427,62 @@ INSERT INTO Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (5
 INSERT INTO Customers (CustomerID, UserName, PassWord, Email, Address) VALUES (55, 'ajoan1i', 'oW3=73SfhNzhH', 'kcolvine1i@amazonaws.com', '1 Lyons Point');
 
 #Orders
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (1, 0, '2024-01-29 10:35:01', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (2, 0, '2023-09-08 19:19:40', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (3, 0, '2023-05-24 01:06:58', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (4, 0, '2024-02-22 02:52:38', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (5, 0, '2023-03-19 22:43:46', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (6, 0, '2024-03-30 04:46:47', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (7, 0, '2023-03-08 15:19:11', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (8, 0, '2023-10-25 15:46:33', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (9, 0, '2023-11-28 23:05:54', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (10, 0, '2023-08-12 18:01:09', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (11, 0, '2023-08-24 00:01:18', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (12, 0, '2024-01-12 16:06:04', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (13, 0, '2023-03-02 19:55:17', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (14, 0, '2023-10-05 23:15:53', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (15, 0, '2024-02-29 22:56:43', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (16, 0, '2023-03-21 07:12:41', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (17, 0, '2023-06-24 16:41:43', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (18, 0, '2023-11-05 07:51:46', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (19, 0, '2023-12-28 16:49:34', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (20, 0, '2023-10-07 17:08:25', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (21, 0, '2023-10-18 10:35:39', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (22, 0, '2024-02-05 17:52:33', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (23, 0, '2023-09-20 02:46:01', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (24, 0, '2023-07-14 15:47:37', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (25, 0, '2024-01-30 11:19:18', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (26, 0, '2023-04-16 17:26:13', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (27, 0, '2023-11-23 16:09:21', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (28, 0, '2024-03-07 23:46:23', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (29, 0, '2023-11-30 04:15:48', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (30, 0, '2023-03-29 10:37:30', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (31, 0, '2023-04-26 13:31:08', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (32, 0, '2023-09-02 21:14:08', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (33, 0, '2023-05-11 07:16:22', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (34, 0, '2023-04-12 12:12:34', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (35, 0, '2023-10-28 21:40:40', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (36, 0, '2023-08-07 02:35:46', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (37, 0, '2024-02-23 22:27:42', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (38, 0, '2023-07-18 18:45:09', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (39, 0, '2024-03-11 07:08:08', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (40, 0, '2024-01-20 07:33:56', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (41, 0, '2023-07-10 19:02:29', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (42, 0, '2024-01-26 02:53:25', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (43, 0, '2023-12-20 20:40:28', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (44, 0, '2023-04-10 08:14:12', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (45, 0, '2024-02-03 05:58:23', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (46, 0, '2023-10-28 06:54:47', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (47, 0, '2023-09-26 16:12:40', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (48, 0, '2023-11-26 23:52:19', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (49, 0, '2023-05-09 07:11:44', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (50, 0, '2023-08-13 20:21:46', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (51, 0, '2023-07-12 12:35:12', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (52, 0, '2023-08-06 18:27:57', 1);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (53, 0, '2024-01-18 15:48:45', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (54, 0, '2023-10-20 11:50:33', 2);
-INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status) VALUES (55, 0, '2023-08-06 17:09:03', 2);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (1, 0, '2023-10-15 09:07:19', 2, 1);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (2, 0, '2023-03-08 12:24:49', 1, 2);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (3, 0, '2023-03-23 14:16:13', 2, 3);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (4, 0, '2023-09-03 12:16:56', 2, 4);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (5, 0, '2023-08-09 04:11:49', 2, 5);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (6, 0, '2023-07-04 04:17:32', 1, 6);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (7, 0, '2023-05-19 15:06:48', 1, 7);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (8, 0, '2023-03-22 03:11:57', 1, 8);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (9, 0, '2023-06-15 20:26:38', 2, 9);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (10, 0, '2023-06-24 06:45:54', 2, 10);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (11, 0, '2023-03-29 08:10:48', 2, 11);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (12, 0, '2023-11-11 15:29:44', 1, 12);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (13, 0, '2023-07-18 03:19:54', 1, 13);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (14, 0, '2023-12-11 11:54:10', 2, 14);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (15, 0, '2024-01-18 18:14:59', 1, 15);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (16, 0, '2023-03-12 00:53:00', 2, 16);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (17, 0, '2024-02-04 13:55:55', 1, 17);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (18, 0, '2023-07-01 02:18:09', 1, 18);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (19, 0, '2024-01-19 08:37:09', 2, 19);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (20, 0, '2023-12-11 20:28:40', 2, 20);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (21, 0, '2023-08-22 12:18:34', 1, 21);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (22, 0, '2024-01-02 17:29:29', 1, 22);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (23, 0, '2024-02-12 12:21:47', 1, 23);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (24, 0, '2023-07-22 08:06:25', 1, 24);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (25, 0, '2024-01-12 13:12:14', 2, 25);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (26, 0, '2023-09-30 13:57:30', 2, 26);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (27, 0, '2023-05-05 02:00:51', 1, 27);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (28, 0, '2023-06-20 20:09:11', 2, 28);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (29, 0, '2024-03-24 22:23:28', 1, 29);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (30, 0, '2023-10-04 02:24:35', 1, 30);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (31, 0, '2023-12-19 17:54:53', 2, 31);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (32, 0, '2024-02-12 13:28:55', 2, 32);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (33, 0, '2023-06-25 09:32:28', 2, 33);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (34, 0, '2024-01-14 02:11:14', 2, 34);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (35, 0, '2023-08-22 04:08:47', 2, 35);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (36, 0, '2023-08-22 16:00:56', 2, 36);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (37, 0, '2024-01-24 07:09:34', 2, 37);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (38, 0, '2023-07-11 19:32:44', 2, 38);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (39, 0, '2023-11-29 15:17:03', 1, 39);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (40, 0, '2023-12-20 01:06:04', 1, 40);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (41, 0, '2023-08-10 15:55:05', 2, 41);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (42, 0, '2023-09-10 01:44:58', 1, 42);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (43, 0, '2023-03-20 14:11:30', 1, 43);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (44, 0, '2023-07-26 11:10:32', 1, 44);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (45, 0, '2023-05-12 02:25:02', 2, 45);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (46, 0, '2023-03-30 09:00:46', 2, 46);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (47, 0, '2023-09-13 22:02:26', 2, 47);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (48, 0, '2023-12-18 19:50:43', 2, 48);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (49, 0, '2024-02-06 14:09:17', 2, 49);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (50, 0, '2024-01-27 19:40:25', 1, 50);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (51, 0, '2023-06-16 14:26:59', 1, 51);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (52, 0, '2023-07-21 12:18:59', 2, 52);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (53, 0, '2023-11-05 00:46:11', 2, 53);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (54, 0, '2023-04-09 14:24:23', 1, 54);
+INSERT INTO commerce.Orders (OrderID, Cost, PlacedTime, Status, CustomerID) VALUES (55, 0, '2023-03-26 09:00:36', 2, 55);
+
 
 #Small_Business_Seller
 INSERT INTO commerce.Small_Business_Seller (BusinessID, UserName, PassWord, Email, Profile) VALUES (1, 'stgrewe0', 'yK5!FxXQ', 'ncristofolo0@google.com', 'Passionate about innovation and creativity');
