@@ -105,7 +105,7 @@ def delete_customer(userID):
 def get_customer_cart(id):
     cursor = db.get_db().cursor()
     cursor.execute('''
-                   SELECT Customers.UserName AS Customer_Name, Products.*, Cart.*
+                   SELECT Products.*, Cart.*
                    FROM Cart NATURAL JOIN Product_In_Cart NATURAL JOIN Products
                    WHERE Cart.CustomerID = {0}
                    '''.format(id))
