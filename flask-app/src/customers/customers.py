@@ -49,7 +49,7 @@ def add_customer():
     return 'customer aaddddeeed!'
 
 
-@customers.route('/customers',methods=['PUT'])
+@customers.route('/customers/<id>',methods=['PUT'])
 def update_customer():
     cust_info = request.json
     # current_app.logger.infor(cust_info)
