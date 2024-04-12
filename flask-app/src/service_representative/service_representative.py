@@ -87,7 +87,6 @@ def handle_rep_response(service_id):
                        FROM Service
                        WHERE ServiceID = ${service_id}
                        ''')
-        pass
     elif request.method == 'PUT':
         # Update the service details
         service_info = request.json
@@ -104,6 +103,7 @@ def handle_rep_response(service_id):
                        WHERE ServiceID = %s
                        '''
         cursor.execute(update_query, (service_type, order_id, start_time, end_time, description, service_id))
+        db.get_db().commit()
         
         
     elif request.method == 'DELETE':
@@ -112,7 +112,7 @@ def handle_rep_response(service_id):
                        FROM Service
                        WHERE ServiceID = ${service_id}
                        ''')
-        pass
+        db.get_db().commit()
 
     
     row_headers = [x[0] for x in cursor.description]

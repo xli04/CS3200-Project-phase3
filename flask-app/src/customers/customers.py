@@ -98,6 +98,7 @@ def delete_customer(userID):
     the_response = make_response(jsonify(json_data))
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
+    db.get_db().commit()
     return the_response
 
 # Get customer detail for customer with particular userID
@@ -141,6 +142,7 @@ def get_customer_card(id):
                     INSERT INTO Card (CardNumber, CustomerID, ExpirationDate, BillingAddress)
                     VALUE (%s, %s, %s, %s)
                     ''',(card_number,id,exp_date,billing_address))
+        db.get_db().commit()
         
     row_headers = [x[0] for x in cursor.description]
     json_data = []
@@ -150,6 +152,8 @@ def get_customer_card(id):
     the_response = make_response(jsonify(json_data))
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
+    
+    
     return the_response
 
 @customers.route('/customers/cards/<customer_id>/<card_number>', methods=['PUT', 'DELETE'])
@@ -181,6 +185,7 @@ def handle_customer_card(customer_id, card_number):
     the_response = make_response(jsonify(json_data))
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
+    db.get_db().commit()
     return the_response
 
 # Get shipping detail for customer with particular userID
@@ -233,6 +238,7 @@ def get_customer_orders(id):
         query += address + ')'
         
         cursor.execute(query)
+        db.get_db().commit()
         
     row_headers = [x[0] for x in cursor.description]
     json_data = []
