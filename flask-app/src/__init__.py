@@ -65,7 +65,7 @@ def create_app():
     app.register_blueprint(rep,    url_prefix='/rep')
     # app.register_blueprint(shippers,    url_prefix='/shippers')
     # app.register_blueprint(service,    url_prefix='/service')
-    app.register_blueprint(sd,    url_prefix='/sd')
+    # app.register_blueprint(sd,    url_prefix='/sd')
     app.register_blueprint(sbs,    url_prefix='/sbs')
 
     # Don't forget to return the app object
