@@ -124,7 +124,7 @@ def handle_rep_response_put(service_id):
 
 # Deletes that specific service
 @rep.route('/rep/response/<id>', methods=['GET'])
-def handle_rep_response_del(response_id):
+def get_rep_response_del(response_id):
     query = '''SELECT r.Contents, r.Type, r.ResponseID, r.ServiceID,r.RepID 
     FROM Response r join Service s on r.ServiceID = s.ServiceID 
     WHERE s.ServiceID = ''' + str(response_id)
@@ -159,12 +159,14 @@ def handle_rep_response_del(service_id):
 
 
 # Deletes that specific service
-@rep.route('/rep/response/<id>', methods=['GET'])
-def handle_rep_response_del(response_id):
-    query = '''DELETE 
-    FROM Response 
-    WHERE ResponseID = ''' + str(response_id)
-    current_app.logger.info(query)
-
+@rep.route('/rep/response', methods=['DELETE'])
+def delete_rep_response():
+    cursor = db.get_db().cursor()
+    rep_info = request.json
+    RepID = rep_info['ResponseID']
+    cursor.execute('''DELETE 
+                    FROM Response 
+                    WHERE ResponseID = %s
+                    ''',(RepID))
     db.get_db().commit()
     return 'deleted'
