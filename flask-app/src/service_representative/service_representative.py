@@ -123,15 +123,48 @@ def handle_rep_response_put(service_id):
 
 
 # Deletes that specific service
-@rep.route('/rep/service/<service_id>', methods=['DELETE'])
-def handle_rep_response_del(service_id):
-    # get a cursor object from the database
-    cursor = db.get_db().cursor()
-    cursor.execute(f'''
-                    DELETE 
-                    FROM Service
-                    WHERE ServiceID = {service_id}
-                    ''')
-    db.get_db().commit()
+@rep.route('/rep/response/<id>', methods=['GET'])
+def handle_rep_response_del(response_id):
+    query = '''SELECT r.Contents, r.Type, r.ResponseID, r.ServiceID,r.RepID 
+    FROM Response r join Service s on r.ServiceID = s.ServiceID 
+    WHERE s.ServiceID = ''' + str(response_id)
+    current_app.logger.info(query)
 
-    return "deleted"
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    column_headers = [x[0] for x in cursor.description]
+    json_data = []
+    the_data = cursor.fetchall()
+    for row in the_data:
+        json_data.append(dict(zip(column_headers, row)))
+    return jsonify(json_data)
+
+
+# Deletes that specific service
+@rep.route('/rep/response/', methods=['POST'])
+def handle_rep_response_del(service_id):
+    cursor = db.get_db().cursor()
+    rep_info = request.json
+        # current_app.logger.infor(cust_info)
+    content = rep_info['CardNumber']
+    type = rep_info['CustomerID']
+    serviceID = rep_info['ExpirationDate']
+    RepID = rep_info['BillingAddress']
+    cursor.execute('''
+                    INSERT INTO commerce.Response (Contents, Type, ServiceID, RepID)
+                    VALUE (%s, %s, %s, %s)
+                    ''',(content,type, serviceID, RepID))
+    db.get_db().commit()
+    return 'added'
+
+
+# Deletes that specific service
+@rep.route('/rep/response/<id>', methods=['GET'])
+def handle_rep_response_del(response_id):
+    query = '''DELETE 
+    FROM Response 
+    WHERE ResponseID = ''' + str(response_id)
+    current_app.logger.info(query)
+
+    db.get_db().commit()
+    return 'deleted'
