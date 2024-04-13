@@ -157,8 +157,8 @@ def add_new_business():
     
     return 'Success!'
 
-@sbs.route('/sbs/<id>', methods=['PUT'])
-def update_business(id):
+@sbs.route('/sbs/', methods=['PUT'])
+def update_business():
     
     # collecting data from the request object 
     the_data = request.json
@@ -170,22 +170,22 @@ def update_business(id):
     password = the_data['PassWord']
     email = the_data['Email']
     profile = the_data['Profile']
+    businessID = the_data['BusinessID']
 
     # Constructing the query
-    query = f'''
+    query = '''
     UPDATE Small_Business_Seller
         SET UserName = %s,
         PassWord = %s,
         Email = %s,
-        Profile = %s)
-    VALUES (%s, %s, %s, %s)
-    WHERE BusinessID = {id}
+        Profile = %s
+    WHERE BusinessID = %s
     '''
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
     cursor = db.get_db().cursor()
-    cursor.execute(query, (username, password, email, profile))
+    cursor.execute(query, (username, password, email, profile, businessID))
     db.get_db().commit()
     
     return 'Success!'
