@@ -47,8 +47,8 @@ def create_app():
     # from src.response.response import response
     # from src.service.service import service
     from src.service_representative.service_representative import rep
-    from src.shippers.shippers import shippers
-    from src.shipping_details.shipping_details import sd
+    # from src.shippers.shippers import shippers
+    # from src.shipping_details.shipping_details import sd
     from src.small_business_owners.small_business_owners import sbs
 
     # Register the routes from each Blueprint with the app object
@@ -63,7 +63,7 @@ def create_app():
     # app.register_blueprint(pic,    url_prefix='/pic')
     # app.register_blueprint(response,    url_prefix='/r')
     app.register_blueprint(rep,    url_prefix='/rep')
-    app.register_blueprint(shippers,    url_prefix='/shippers')
+    # app.register_blueprint(shippers,    url_prefix='/shippers')
     # app.register_blueprint(service,    url_prefix='/service')
     app.register_blueprint(sd,    url_prefix='/sd')
     app.register_blueprint(sbs,    url_prefix='/sbs')
