@@ -53,35 +53,15 @@ def get_business_detail (id):
     
 
 # Get product detail for owners with particular businessID
-@sbs.route('/sbs/product/<id>', methods=['GET','POST'])
+@sbs.route('/sbs/product/<id>', methods=['GET'])
 def get_sbs_products(id):
     cursor = db.get_db().cursor()
-    
-    if request.method == 'GET':
-        cursor.execute('''
-                    SELECT ProductName, ProductionDesciption, Price, UnitsInStock, UnitsSold, OnSale
-                    FROM Small_Business_Seller NATURAL JOIN Products
-                    WHERE Small_Business_Seller.BusinessID = {0}
-                    '''.format(id))
-    elif request.method == 'POST':
-        the_data = request.json
 
-        #extracting the variable
-        product_id = the_data['ProductID']
-        product_name = the_data['ProductName']
-        price = the_data['Price']
-        units_in_stock = the_data['UnitsInStock']
-        description = the_data['ProductionDescription']
-        units_sold = the_data['UnitsSold']
-        on_sale = the_data['OnSale']
-
-        # Constructing the query
-        query = '''
-        INSERT INTO PRODUCTS(ProductName, Price, UnitsInStock, ProductionDescription, UnitsSold, OnSale)
-        VALUES (%s, %s, %s, %s, %s, %s)    
-        '''
-        cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale, product_id))
-        db.get_db().commit()
+    cursor.execute('''
+                SELECT ProductName, ProductionDesciption, Price, UnitsInStock, UnitsSold, OnSale
+                FROM Small_Business_Seller NATURAL JOIN Products
+                WHERE Small_Business_Seller.BusinessID = {0}
+                '''.format(id))
         
     row_headers = [x[0] for x in cursor.description]
     json_data = []
@@ -92,6 +72,33 @@ def get_sbs_products(id):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
+
+# Get product detail for owners with particular businessID
+@sbs.route('/sbs/product/', methods=['POST'])
+def add_sbs_products(id):
+    cursor = db.get_db().cursor()
+    
+    the_data = request.json
+
+    #extracting the variable
+    product_id = the_data['ProductID']
+    product_name = the_data['ProductName']
+    price = the_data['Price']
+    units_in_stock = the_data['UnitsInStock']
+    description = the_data['ProductionDescription']
+    units_sold = the_data['UnitsSold']
+    on_sale = the_data['OnSale']
+
+    # Constructing the query
+    query = '''
+    INSERT INTO PRODUCTS(ProductName, Price, UnitsInStock, ProductionDescription, UnitsSold, OnSale)
+    VALUES (%s, %s, %s, %s, %s, %s)    
+    '''
+    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale, product_id))
+    db.get_db().commit()
+    
+    return "product added"
+
 
 @sbs.route('/sbs/', methods=['POST'])
 def add_new_business():
@@ -155,21 +162,3 @@ def update_business(id):
     db.get_db().commit()
     
     return 'Success!'
-
-
-# @sbs.route('/sbs/<id>', methods=['DELETE'])
-# def erase_business (id):
-
-#     query = 'DELETE FROM Small_Business_Seller WHERE BusinessID = ' + str(id)
-#     current_app.logger.info(query)
-
-#     cursor = db.get_db().cursor()
-#     cursor.execute(query)
-#     column_headers = [x[0] for x in cursor.description]
-#     json_data = []
-#     the_data = cursor.fetchall()
-#     for row in the_data:
-#         json_data.append(dict(zip(column_headers, row)))
-        
-#     db.get_db().commit()
-#     return jsonify(json_data)
