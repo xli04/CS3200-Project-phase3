@@ -58,7 +58,7 @@ def get_sbs_products(id):
     cursor = db.get_db().cursor()
 
     cursor.execute('''
-                SELECT ProductName, ProductionDesciption, Price, UnitsInStock, UnitsSold, OnSale
+                SELECT ProductName, ProductionDescription, Price, UnitsInStock, UnitsSold, OnSale, ProductID
                 FROM Small_Business_Seller NATURAL JOIN Products
                 WHERE Small_Business_Seller.BusinessID = {0}
                 '''.format(id))
@@ -81,20 +81,18 @@ def add_sbs_products():
     the_data = request.json
 
     #extracting the variable
-    product_id = the_data['ProductID']
     product_name = the_data['ProductName']
     price = the_data['Price']
     units_in_stock = the_data['UnitsInStock']
     description = the_data['ProductionDescription']
-    units_sold = the_data['UnitsSold']
     on_sale = the_data['OnSale']
-
+    BusinessID = the_data['BusinessID']
     # Constructing the query
     query = '''
-    INSERT INTO PRODUCTS(ProductName, Price, UnitsInStock, ProductionDescription, UnitsSold, OnSale)
-    VALUES (%s, %s, %s, %s, %s, %s)    
+    INSERT INTO Products(ProductName, Price, UnitsInStock, ProductionDescription, UnitsSold, OnSale, BusinessID)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)    
     '''
-    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale))
+    cursor.execute(query, (product_name, price, units_in_stock, description,0, on_sale, BusinessID))
     db.get_db().commit()
     
     return "product added"
@@ -108,7 +106,6 @@ def update_sbs_products():
 
     #extracting the variable
     product_id = the_data['ProductID']
-    product_name = the_data['ProductName']
     price = the_data['Price']
     units_in_stock = the_data['UnitsInStock']
     description = the_data['ProductionDescription']
@@ -118,10 +115,10 @@ def update_sbs_products():
     # Constructing the query
     query = '''
     UPDATE Products
-    SET ProductName =  %s, Price = %s, UnitsInStock = %s, ProductionDescription = %s, UnitsSold = %s, OnSale = %s)
+    SET Price = %s, UnitsInStock = %s, ProductionDescription = %s, UnitsSold = %s, OnSale = %s
     WHERE ProductID = %s    
     '''
-    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale, product_id))
+    cursor.execute(query, (price, units_in_stock, description, units_sold, on_sale, product_id))
     db.get_db().commit()
     
     return "product updated"
@@ -189,3 +186,58 @@ def update_business():
     db.get_db().commit()
     
     return 'Success!'
+
+@sbs.route('/sbs/account/<id>', methods=['GET'])
+def get_sbs_account(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                SELECT *
+                FROM BankAccount
+                WHERE OwnerID = {0}
+                '''.format(id))
+        
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# Get product detail for owners with particular businessID
+@sbs.route('/sbs/account/', methods=['POST'])
+def add_sbs_account():
+    cursor = db.get_db().cursor()
+    
+    the_data = request.json
+
+    #extracting the variable
+    acc_num = the_data['AccountNumber']
+    bank_name = the_data['BankName']
+    bill = the_data['BillingAddress']
+    owner_id = the_data['OwnerID']
+    # Constructing the query
+    query = '''
+    INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID)
+    VALUES (%s, %s, %s, %s)    
+    '''
+    cursor.execute(query, (acc_num, bank_name, bill, owner_id))
+    db.get_db().commit()
+    
+    return "product added"
+
+# Get product detail for owners with particular businessID
+@sbs.route('/sbs/account/', methods=['DELETE'])
+def delete_sbs_account():
+    cursor = db.get_db().cursor()
+    acc_info = request.json
+    ownerID = acc_info['OwnerID']
+    acc_num = acc_info['AccountNumber']
+    cursor.execute('''DELETE 
+                    FROM BankAccount 
+                    WHERE OwnerID = %s and AccountNumber = %s
+                    ''',(ownerID, acc_num))
+    db.get_db().commit()
+    return 'deleted'

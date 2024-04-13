@@ -42,7 +42,7 @@ def create_app():
     # from src.drivers.drivers import drivers
     # from src.orderdetails.orderdetails import orderdetails
     # from src.orders.orders import orders
-    from src.products.products  import products
+    # from src.products.products  import products
     # from src.product_in_cart.product_in_cart  import pic
     # from src.response.response import response
     # from src.service.service import service
@@ -59,7 +59,7 @@ def create_app():
     # app.register_blueprint(drivers,    url_prefix='/d')
     # app.register_blueprint(orders,    url_prefix='/o')
     # app.register_blueprint(orderdetails,    url_prefix='/od')
-    app.register_blueprint(products,    url_prefix='/p')
+    # app.register_blueprint(products,    url_prefix='/p')
     # app.register_blueprint(pic,    url_prefix='/pic')
     # app.register_blueprint(response,    url_prefix='/r')
     app.register_blueprint(rep,    url_prefix='/rep')

@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS Service
 
 CREATE TABLE IF NOT EXISTS Response
 (
-    ResponseID int          NOT NULL  auto_increment,
+    ResponseID int          NOT NULL auto_increment,
     Contents   varchar(500) NOT NULL,
     Type       enum ('Phone','Website','Email','Carrier Pigeon','Walkie Talkie','Talking'),
     ServiceID  int          NOT NULL,
@@ -186,6 +186,17 @@ CREATE TABLE IF NOT EXISTS Shipping_Detail
         on update cascade on delete restrict,
     CONSTRAINT fk_13 FOREIGN KEY (CustomerID)
         REFERENCES Customers (CustomerID)
+        on update cascade on delete restrict
+);
+
+CREATE TABLE IF not exists BankAccount(
+    AccountNumber           varchar(50)  NOT NULL ,
+    BankName               varchar(100)          NOT NULL,
+    BillAddress              varchar(100) NULL,
+    OwnerID     int not null,
+    PRIMARY KEY (AccountNumber, OwnerID),
+    CONSTRAINT fk_33 FOREIGN KEY (OwnerID)
+        REFERENCES Small_Business_Seller (BusinessID)
         on update cascade on delete restrict
 );
 
@@ -1550,3 +1561,68 @@ INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID, RepID) VAL
 INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID, RepID) VALUES (218, 'Repair broken window in office', 'Talking', 38, 41);
 INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID, RepID) VALUES (219, 'Clean gutters on house', 'Phone', 39, 5);
 INSERT INTO commerce.Response (ResponseID, Contents, Type, ServiceID, RepID) VALUES (220, 'Unclog drain in laundry room', 'Phone', 40, 43);
+
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602210207745239', 'Silver Sagebrush', '1 Moose Way', 2);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602212864149440', 'Wireleaf Dropseed', '62 Fallview Crossing', 3);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602212871125797', 'Pauper\'s-tea', '0 Sachs Parkway', 29);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602212911415265', 'Reeves\' Meadowsweet', '93382 Harper Way', 5);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602214241743994', 'Bearded Prairie Clover', '956 Maywood Court', 17);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602215335455064', 'Whitehead', '82 Lukken Way', 13);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602215823788612', 'Veiny False Pennyroyal', '90527 Meadow Valley Crossing', 6);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602217886984880', 'Foxtail Clubmoss', '348 8th Pass', 6);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602218209113637', 'Berlandier\'s Wolfberry', '150 Vera Road', 30);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602219627558544', 'Naturita Milkvetch', '96740 Grover Center', 9);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602220389977054', 'Terrestrial Cowhorn Orchid', '64193 Harbort Crossing', 35);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602220668926319', 'Cahaba Prairie Clover', '4279 Packers Plaza', 26);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602223062271704', 'Arizona Poppy', '26 Katie Alley', 1);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602225095357509', 'Koolau Range Rollandia', '614 Sherman Place', 54);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602225233004377', 'Tender Lovegrass', '9268 Garrison Center', 28);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602226111355147', 'St. John\'s Melicope', '19361 Dahle Junction', 23);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602226862236470', 'Urn Lichen', '284 Bultman Court', 50);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602227476887229', 'Scouler\'s Valerian', '2445 Independence Alley', 19);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602228036821906', 'Hooker\'s Manzanita', '8511 Hoffman Place', 14);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602229882133768', 'Hoary Caper', '12596 Mifflin Pass', 8);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602229960637219', 'Jaffueliobryum Moss', '7938 Moulton Parkway', 1);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602231243738574', 'Smooth Northern-rockcress', '7091 Ramsey Road', 10);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602232121630057', 'Kaala Stenogyne', '24 Almo Crossing', 55);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602233866197492', 'Crown Of Thorns', '6 Lighthouse Bay Crossing', 16);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602235430719719', 'Sweetshoot Bamboo', '3486 Hovde Way', 2);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602235868560072', 'Yellow Rabbitbrush', '97 Lawn Center', 39);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602236561852667', 'Smallflower Nemophila', '9656 Butterfield Hill', 40);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602238616096035', 'Smotherweed', '9605 Westerfield Hill', 48);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602240669107040', 'Jelly Lichen', '22147 Arizona Pass', 27);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602243514345807', 'Halberdleaf Tearthumb', '901 Westend Street', 4);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602244469993906', 'Spiral Sorrel', '9 Prairie Rose Way', 33);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602245295330189', 'Scalloped Milkwort', '95 Columbus Place', 7);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602246766372890', 'Eastern Poison Ivy', '69798 Pankratz Circle', 34);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602247369491616', 'Miller\'s Rock Moss', '70833 Schmedeman Court', 4);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602248161353384', 'American Alumroot', '34183 Lighthouse Bay Street', 38);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602249084247497', 'Rauiella Moss', '29724 Fairfield Avenue', 31);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602250250095249', 'Wheat Sedge', '8511 Colorado Crossing', 47);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602251202757910', 'Riverswamp Nutrush', '5 Rockefeller Alley', 3);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602251745489013', 'Western False Rue Anemone', '0 Northfield Center', 24);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602252326528047', 'Trask\'s Milkvetch', '96915 Stuart Drive', 52);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602253088725235', 'Pinto Beardtongue', '09 Lotheville Drive', 21);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602253173247277', 'Globe Earth Lichen', '3055 Vera Pass', 36);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602253512598240', 'Oconee Bells', '64 Twin Pines Plaza', 20);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602253694262433', 'Dulichium', '3845 Graedel Alley', 49);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602254066570163', 'Antilles Fanpetals', '0563 Cottonwood Junction', 7);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602255146218897', 'Prairie Phacelia', '49 Cottonwood Place', 42);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602255753055624', 'Stiffstem Flax', '595 7th Way', 44);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602257490313910', 'Wild Garlic', '830 Jana Plaza', 8);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602258584117209', 'Scarlet Firethorn', '787 Green Ridge Trail', 53);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5602258792193430', 'Texas Sleepydaisy', '51791 Anhalt Plaza', 43);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610190525881884', 'Redbird Flower', '44692 Bartelt Terrace', 5);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610261421442780', 'Spiny Combretum', '06217 Union Avenue', 46);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610328325264139', 'Pickering\'s Dawnflower', '4616 Ronald Regan Street', 37);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610497386242290', 'Williams\' Buckwheat', '48 Vahlen Crossing', 45);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610506728878668', 'Wailua River Yellow Loosestrife', '7 Banding Terrace', 51);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610514069628171', 'Fumitory', '3980 Daystar Way', 25);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610747023356311', 'Schreber\'s Dicranella Moss', '6339 Walton Avenue', 22);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610797140056930', 'Kentucky Yellowwood', '178 Delaware Pass', 41);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610848685277546', 'Chiricahua Mountain Sandmat', '951 New Castle Street', 32);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610885163614568', 'Whorled Marshpennywort', '67 Lotheville Street', 18);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610900035046483', 'Robust Rhytidiopsis Moss', '83 Norway Maple Circle', 11);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610926144403232', 'Limahuli Cyrtandra', '176 Sherman Alley', 15);
+INSERT INTO commerce.BankAccount (AccountNumber, BankName, BillAddress, OwnerID) VALUES ('5610999525757310', 'Parmotrema Lichen', '96 Shopko Point', 12);
+

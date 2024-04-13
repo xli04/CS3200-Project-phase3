@@ -54,7 +54,7 @@ def get_rep_detail (id):
 
 # Get product detail for owners with particular businessID
 @rep.route('/rep/service', methods=['GET'])
-def get_rep_responses(id):
+def get_rep_responses():
     cursor = db.get_db().cursor()
     cursor.execute('''
                    SELECT *
@@ -80,7 +80,7 @@ def handle_rep_response(service_id):
     cursor.execute(f'''
                     SELECT *
                     FROM Service
-                    WHERE ServiceID = ${service_id}
+                    WHERE ServiceID = {service_id}
                     ''')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
@@ -96,23 +96,19 @@ def handle_rep_response(service_id):
 
 
 # Updates that specific service
-@rep.route('/rep/service/<service_id>', methods=['PUT'])
-def handle_rep_response_put(service_id):
+@rep.route('/rep/service', methods=['PUT'])
+def handle_rep_response_put():
     # get a cursor object from the database
     cursor = db.get_db().cursor()
     service_info = request.json
-    service_type = service_info['Type']
-    order_id = service_info['OrderID']
-    start_time = service_info['StartTime']
     end_time = service_info['EndTime']
-    description = service_info['Description']
-    
+    service_id = service_info['ServiceID']
     update_query = '''
                     UPDATE Service
-                    SET Type = %s, OrderID = %s, StartTime = %s, EndTime = %s, Description = %s
+                    SET EndTime = %s
                     WHERE ServiceID = %s
                     '''
-    cursor.execute(update_query, (service_type, order_id, start_time, end_time, description, service_id))
+    cursor.execute(update_query, (end_time, service_id))
     db.get_db().commit()
         
     return "ok updated service"
@@ -121,7 +117,7 @@ def handle_rep_response_put(service_id):
 
 
 # Deletes that specific service
-@rep.route('/rep/response/<id>', methods=['GET'])
+@rep.route('/rep/response/<response_id>', methods=['GET'])
 def get_rep_response_del(response_id):
     query = '''SELECT r.Contents, r.Type, r.ResponseID, r.ServiceID,r.RepID 
     FROM Response r join Service s on r.ServiceID = s.ServiceID 
@@ -140,7 +136,7 @@ def get_rep_response_del(response_id):
 
 # Deletes that specific service
 @rep.route('/rep/response/', methods=['POST'])
-def handle_rep_response_del(service_id):
+def handle_rep_response_del():
     cursor = db.get_db().cursor()
     rep_info = request.json
         # current_app.logger.infor(cust_info)
