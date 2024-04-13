@@ -217,17 +217,14 @@ def get_customer_shipments(id):
     return the_response
 
 # Get orders detail for customer with particular userID
-@customers.route('/customers/orders/<id>', methods=['GET'])
-def get_customer_orders(id):
+@customers.route('/customers/orders_detail/<id>', methods=['GET'])
+def get_customer_orders_detail(id):
     cursor = db.get_db().cursor()
-    
-
     cursor.execute('''
-                SELECT Status, Cost, PlacedTime 
-                FROM Shipping_Detail NATURAL JOIN Orders
-                WHERE Customers.CustomerID = {0}
+                SELECT p.* 
+                FROM Products p join OrderDetails o on p.ProductID = o.ProductID
+                WHERE o.OrderID =  {0}
                 '''.format(id))
-      
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -237,6 +234,53 @@ def get_customer_orders(id):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
+
+@customers.route('/customers/orders/<id>', methods=['GET'])
+def get_customer_orders(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+                SELECT *
+                From Orders
+                WHERE Orders.CustomerID = {0}
+                '''.format(id))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+@customers.route('/customers/order', methods=['POST'])
+def add_customer_order():
+    cursor = db.get_db().cursor()
+    order_info = request.json
+        # current_app.logger.infor(cust_info)
+    PlacedTime = order_info['PlacedTime']
+    cus_id = order_info['CustomerID']
+    cursor.execute('''
+                    INSERT INTO commerce.Orders (Cost, PlacedTime, Status, CustomerID)
+                    VALUE (%s, %s, %s, %s)
+                    ''',(0,PlacedTime,1,cus_id))
+    db.get_db().commit()
+    return 'added'
+
+@customers.route('/customers/order_detail', methods=['POST'])
+def add_customer_order_detail():
+    cursor = db.get_db().cursor()
+    order_info = request.json
+        # current_app.logger.infor(cust_info)
+    ProductID = order_info['ProductID']
+    OrderID = order_info['OrderID']
+    Quantity = order_info['Quantity']
+    cursor.execute('''
+                    INSERT INTO commerce.OrderDetails (ProductID, OrderID, Quantity)
+                    VALUE (%s, %s, %s)
+                    ''',(ProductID, OrderID, Quantity))
+    db.get_db().commit()
+    return 'added'
 
 # # Get orders detail for customer with particular userID
 # @customers.route('/customers/orders/<id>', methods=['POST'])

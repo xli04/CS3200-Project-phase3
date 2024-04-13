@@ -157,19 +157,19 @@ def update_business(id):
     return 'Success!'
 
 
-@sbs.route('/sbs/<id>', methods=['DELETE'])
-def erase_business (id):
+# @sbs.route('/sbs/<id>', methods=['DELETE'])
+# def erase_business (id):
 
-    query = 'DELETE FROM Small_Business_Seller WHERE BusinessID = ' + str(id)
-    current_app.logger.info(query)
+#     query = 'DELETE FROM Small_Business_Seller WHERE BusinessID = ' + str(id)
+#     current_app.logger.info(query)
 
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    column_headers = [x[0] for x in cursor.description]
-    json_data = []
-    the_data = cursor.fetchall()
-    for row in the_data:
-        json_data.append(dict(zip(column_headers, row)))
+#     cursor = db.get_db().cursor()
+#     cursor.execute(query)
+#     column_headers = [x[0] for x in cursor.description]
+#     json_data = []
+#     the_data = cursor.fetchall()
+#     for row in the_data:
+#         json_data.append(dict(zip(column_headers, row)))
         
-    db.get_db().commit()
-    return jsonify(json_data)
+#     db.get_db().commit()
+#     return jsonify(json_data)

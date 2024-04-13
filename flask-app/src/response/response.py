@@ -39,7 +39,7 @@ def get_response():
 @response.route('/response/<id>', methods=['GET'])
 def get_response_detail (id):
 
-    query = 'SELECT * FROM Response WHERE ResponseID = ' + str(id)
+    query = 'SELECT r.Contents, r.Type, r.ResponseID, r.ServiceID,r.RepID FROM Response r join Service s on r.ServiceID = s.ServiceID WHERE s.ServiceID = ' + str(id)
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
@@ -51,3 +51,18 @@ def get_response_detail (id):
         json_data.append(dict(zip(column_headers, row)))
     return jsonify(json_data)
     
+@response.route('/response', methods=['POST'])
+def add_response():
+    cursor = db.get_db().cursor()
+    rep_info = request.json
+        # current_app.logger.infor(cust_info)
+    content = rep_info['CardNumber']
+    type = rep_info['CustomerID']
+    serviceID = rep_info['ExpirationDate']
+    RepID = rep_info['BillingAddress']
+    cursor.execute('''
+                    INSERT INTO commerce.Response (Contents, Type, ServiceID, RepID)
+                    VALUE (%s, %s, %s, %s)
+                    ''',(content,type, serviceID, RepID))
+    db.get_db().commit()
+    return 'added'

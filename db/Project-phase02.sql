@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS Service
 
 CREATE TABLE IF NOT EXISTS Response
 (
-    ResponseID int          NOT NULL,
+    ResponseID int          NOT NULL  auto_increment,
     Contents   varchar(500) NOT NULL,
     Type       enum ('Phone','Website','Email','Carrier Pigeon','Walkie Talkie','Talking'),
     ServiceID  int          NOT NULL,

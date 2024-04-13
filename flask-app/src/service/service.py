@@ -50,4 +50,19 @@ def get_service_detail (id):
     for row in the_data:
         json_data.append(dict(zip(column_headers, row)))
     return jsonify(json_data)
+
+@service.route('/service', methods=['PUT'])
+def update_service():
+    cursor = db.get_db().cursor()
+    rep_info = request.json
+        # current_app.logger.infor(cust_info)
+    endTime = rep_info['EndTime']
+    ServiceID = rep_info['ServiceID']
+    cursor.execute('''
+        UPDATE Service
+        SET EndTime = %s
+        WHERE ServiceID = %s
+        ''', (endTime, ServiceID))
+    db.get_db().commit()
+    return 'updated'
     
