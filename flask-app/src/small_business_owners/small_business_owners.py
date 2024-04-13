@@ -75,7 +75,7 @@ def get_sbs_products(id):
 
 # Get product detail for owners with particular businessID
 @sbs.route('/sbs/product/', methods=['POST'])
-def add_sbs_products(id):
+def add_sbs_products():
     cursor = db.get_db().cursor()
     
     the_data = request.json
@@ -94,10 +94,37 @@ def add_sbs_products(id):
     INSERT INTO PRODUCTS(ProductName, Price, UnitsInStock, ProductionDescription, UnitsSold, OnSale)
     VALUES (%s, %s, %s, %s, %s, %s)    
     '''
-    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale, product_id))
+    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale))
     db.get_db().commit()
     
     return "product added"
+
+# Get product detail for owners with particular businessID
+@sbs.route('/sbs/product/', methods=['PUT'])
+def update_sbs_products():
+    cursor = db.get_db().cursor()
+    
+    the_data = request.json
+
+    #extracting the variable
+    product_id = the_data['ProductID']
+    product_name = the_data['ProductName']
+    price = the_data['Price']
+    units_in_stock = the_data['UnitsInStock']
+    description = the_data['ProductionDescription']
+    units_sold = the_data['UnitsSold']
+    on_sale = the_data['OnSale']
+
+    # Constructing the query
+    query = '''
+    UPDATE Products
+    SET ProductName =  %s, Price = %s, UnitsInStock = %s, ProductionDescription = %s, UnitsSold = %s, OnSale = %s)
+    WHERE ProductID = %s    
+    '''
+    cursor.execute(query, (product_name, price, units_in_stock, description, units_sold, on_sale, product_id))
+    db.get_db().commit()
+    
+    return "product updated"
 
 
 @sbs.route('/sbs/', methods=['POST'])
