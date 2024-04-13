@@ -105,7 +105,7 @@ def delete_customer(userID):
 def get_customer_cart(id):
     cursor = db.get_db().cursor()
     cursor.execute('''
-                   SELECT Products.*, Cart.*
+                   SELECT Products.*, Product_In_Cart.*
                    FROM Cart NATURAL JOIN Product_In_Cart NATURAL JOIN Products
                    WHERE Cart.CustomerID = {0}
                    '''.format(id))
@@ -119,6 +119,37 @@ def get_customer_cart(id):
     the_response.mimetype = 'application/json'
     return the_response
 
+@customers.route('/customers/cart', methods=['POST'])
+def post_customer_cart():
+    cursor = db.get_db().cursor()
+    cart_info = request.json
+        # current_app.logger.infor(cust_info)
+    pro_id = cart_info['ProductID']
+    cus_id = cart_info['CustomerID']
+    quantity = cart_info['Quantity']
+    cursor.execute('''
+                    INSERT INTO commerce.Product_In_Cart (CustomerID, ProductID, Quantity)
+                    VALUE (%s, %s, %s)
+                    ''',(cus_id, pro_id, quantity))
+    db.get_db().commit()
+    return 'added'
+
+@customers.route('/customers/cart', methods=['DELETE'])
+def delete_customer_cart():
+    cursor = db.get_db().cursor()
+    cart_info = request.json
+        # current_app.logger.infor(cust_info)
+    cus_id = cart_info['CustomerID']
+    product_id = cart_info['ProductID']
+    
+    # card_number = cart_info['CardNumber']
+    # exp_date = cart_info['ExpirationDate']
+    # billing_address = cart_info['BillingAddress']
+    cursor.execute('''
+                    DELETE FROM Product_In_Cart where CustomerID = %s and ProductID = %s
+                    ''',(cus_id,product_id))
+    db.get_db().commit()
+    return 'delete'
 
 # Get card detail for customer with particular userID
 @customers.route('/customers/card/<id>', methods=['GET'])
