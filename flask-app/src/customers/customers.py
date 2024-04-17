@@ -89,12 +89,14 @@ def update_customer():
 @customers.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
     cursor = db.get_db().cursor()
+    #SQL query to fetch the customer with the given UserID
     cursor.execute('select * from Customers where CustomerID = {0}'.format(userID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
+    #Get all the rows from the query result
     theData = cursor.fetchall()
     for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
+        json_data.append(dict(zip(row_headers, row))) #Convert Result into list of dictionaries
     the_response = make_response(jsonify(json_data))
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
@@ -235,7 +237,7 @@ def delete_customer_card(customer_id, card_number):
     cursor = db.get_db().cursor()
 
     print('???')
-        # Delete the card with the given card number
+    # Delete the card with the specified number
     cursor.execute('''
         DELETE FROM Card
         WHERE CardNumber = %s AND CustomerID = %s
@@ -245,7 +247,7 @@ def delete_customer_card(customer_id, card_number):
     db.get_db().commit()
     return "success"
 
-# Get shipping detail for customer with particular userID
+# Get shipping details for customers using a specific userID
 @customers.route('/customers/all_shipping/<id>', methods=['GET'])
 def get_customer_shipments(id):
     cursor = db.get_db().cursor()
@@ -264,7 +266,7 @@ def get_customer_shipments(id):
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get shipping detail for customer with particular userID
+# Get shipping of order details for customers using a specific userID
 @customers.route('/customers/shipping_of_order/<order_id>', methods=['GET'])
 def get_one_shipment(id):
     cursor = db.get_db().cursor()
@@ -283,7 +285,7 @@ def get_one_shipment(id):
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get orders detail for customer with particular userID
+# Get Orders detail for customers using a specific userID
 @customers.route('/customers/orders_detail/<id>', methods=['GET'])
 def get_customer_orders_detail(id):
     cursor = db.get_db().cursor()
