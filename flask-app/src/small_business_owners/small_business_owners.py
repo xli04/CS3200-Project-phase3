@@ -36,6 +36,7 @@ def get_sbs():
 
     return jsonify(json_data)
 
+# selects the business owner based on the businessID
 @sbs.route('/sbs/<id>', methods=['GET'])
 def get_business_detail (id):
 
@@ -52,7 +53,7 @@ def get_business_detail (id):
     return jsonify(json_data)
     
 
-# Get product detail for owners with particular businessID
+# Get all products from a particular businessID
 @sbs.route('/sbs/product/<id>', methods=['GET'])
 def get_sbs_products(id):
     cursor = db.get_db().cursor()
@@ -73,7 +74,7 @@ def get_sbs_products(id):
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get product detail for owners with particular businessID
+# Inserts (puts) product detail for owners with particular businessID
 @sbs.route('/sbs/product/', methods=['POST'])
 def add_sbs_products():
     cursor = db.get_db().cursor()
@@ -97,7 +98,7 @@ def add_sbs_products():
     
     return "product added"
 
-# Get product detail for owners with particular businessID
+# Updates product detail for owners with particular businessID
 @sbs.route('/sbs/product/', methods=['PUT'])
 def update_sbs_products():
     cursor = db.get_db().cursor()
@@ -123,10 +124,9 @@ def update_sbs_products():
     
     return "product updated"
 
-
+# Inserts a new business into the database
 @sbs.route('/sbs/', methods=['POST'])
 def add_new_business():
-    
     
     # collecting data from the request object 
     the_data = request.json
@@ -154,6 +154,7 @@ def add_new_business():
     
     return 'Success!'
 
+# Updates a business in the database
 @sbs.route('/sbs/', methods=['PUT'])
 def update_business():
     
@@ -187,6 +188,7 @@ def update_business():
     
     return 'Success!'
 
+# gets the bank account for based of a specific small business owner ID
 @sbs.route('/sbs/account/<id>', methods=['GET'])
 def get_sbs_account(id):
     cursor = db.get_db().cursor()
@@ -206,7 +208,7 @@ def get_sbs_account(id):
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get product detail for owners with particular businessID
+# Adds a bank account for a small business owner based off it's ownerID
 @sbs.route('/sbs/account/', methods=['POST'])
 def add_sbs_account():
     cursor = db.get_db().cursor()
@@ -228,7 +230,7 @@ def add_sbs_account():
     
     return "product added"
 
-# Get product detail for owners with particular businessID
+# Deletes a bank account for a small business owner
 @sbs.route('/sbs/account/', methods=['DELETE'])
 def delete_sbs_account():
     cursor = db.get_db().cursor()
