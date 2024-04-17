@@ -26,10 +26,10 @@ def get_customers():
     the_response.mimetype = 'application/json'
     return the_response
 
-
+#Route to add new customers
 @customers.route('/customers',methods=['POST'])
 def add_customer():
-    cust_info = request.json
+    cust_info = request.json #Get Customer Info when Requested
     # current_app.logger.infor(cust_info)
     
     cust_id = cust_info['CustomerID']
@@ -37,12 +37,12 @@ def add_customer():
     password = cust_info['PassWord']
     email = cust_info['Email']
     address = cust_info['Address']
-    
+    #Insert Customers into the DB
     query = '''
     INSERT INTO Customers 
     VALUES (%s,%s,%s,%s)
     '''
-    
+    #Tuple for SQL query 
     data = (username, password,email,address)
     cursor = db.get_db().cursor()
     cursor.execute(query,data)
@@ -51,33 +51,36 @@ def add_customer():
 
 @customers.route('/customers/allProducts', methods=['GET'])
 def get_all_products():
-    cursor = db.get_db().cursor()
-    cursor.execute('select * from Products')
+    cursor = db.get_db().cursor() #Cursor object to interact with database
+    cursor.execute('select * from Products') #Fetch all Products
     row_headers = [x[0] for x in cursor.description]
     json_data = []
-    theData = cursor.fetchall()
+    theData = cursor.fetchall() #Fetch all rows from query
     for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
+        json_data.append(dict(zip(row_headers, row))) #Result into list of Dictionaries
     the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
+    the_response.status_code = 200 
     the_response.mimetype = 'application/json'
     return the_response
 
 @customers.route('/customers_put',methods=['PUT'])
 def update_customer():
     cust_info = request.json
-    # current_app.logger.infor(cust_info)
-    id = cust_info['CustomerID']
+    # current_app.logger.infor(cust_info) 
+    #Extract Individual Fields in customer info 
+    id = cust_info['CustomerID'] 
     username = cust_info['UserName']
     password = cust_info['PassWord']
     email = cust_info['Email']
     address = cust_info['Address']
-    query = '''
+    #Update query for customers DB
+    query = '''    
     UPDATE Customers 
     SET UserName = %s, PassWord = %s, Email = %s, Address = %s 
     WHERE CustomerID = %s
     '''
     data = (username, password,email,address,id)
+    #Get DB cursor and update
     cursor = db.get_db().cursor()
     r = cursor.execute(query,data)
     db.get_db().commit()
