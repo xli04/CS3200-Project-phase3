@@ -9,7 +9,7 @@ from src import db
 
 customers = Blueprint('customers', __name__)
 
-# Get all customers from the DB
+#Get all customers for the DB
 @customers.route('/customers', methods=['GET'])
 def get_customers():
     cursor = db.get_db().cursor()
@@ -25,6 +25,7 @@ def get_customers():
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
+
 
 @customers.route('/customers',methods=['POST'])
 def add_customer():
