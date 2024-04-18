@@ -29,7 +29,7 @@ def get_customers():
 #Route to add new customers
 @customers.route('/customers',methods=['POST'])
 def add_customer():
-    cust_info = request.json #Get Customer Info when Requested
+    cust_info = request.json #Obtain requested customer information
     # current_app.logger.infor(cust_info)
     
     cust_id = cust_info['CustomerID']
@@ -37,6 +37,7 @@ def add_customer():
     password = cust_info['PassWord']
     email = cust_info['Email']
     address = cust_info['Address']
+    
     #Insert Customers into the DB
     query = '''
     INSERT INTO Customers 
@@ -167,6 +168,7 @@ def delete_customer_cart():
     # card_number = cart_info['CardNumber']
     # exp_date = cart_info['ExpirationDate']
     # billing_address = cart_info['BillingAddress']
+    # delete product from customer's cart
     cursor.execute('''
                     DELETE FROM Product_In_Cart where CustomerID = %s and ProductID = %s
                     ''',(cus_id,product_id))
@@ -191,7 +193,7 @@ def get_customer_card(id):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     
-    
+
     return the_response
 
 @customers.route('/customers/card', methods=['POST'])
@@ -208,6 +210,8 @@ def add_customer_card():
                     VALUE (%s, %s, %s, %s)
                     ''',(card_number,cus_id,exp_date,billing_address))
     db.get_db().commit()
+
+    # return success statement
     return 'added'
 
 @customers.route('/customers/cards/<customer_id>/<card_number>', methods=['PUT'])
@@ -218,6 +222,7 @@ def put_customer_card(customer_id, card_number):
     card_info = request.json
     exp_date = card_info['ExpirationDate']
     billing_address = card_info['BillingAddress']
+    # execute query to update customer card
     cursor.execute('''
         UPDATE Card
         SET ExpirationDate = %s, BillingAddress = %s
@@ -292,6 +297,7 @@ def get_one_shipment(id):
 @customers.route('/customers/orders_detail/<id>', methods=['GET'])
 def get_customer_orders_detail(id):
     cursor = db.get_db().cursor()
+    # execute query to obtain order details
     cursor.execute('''
                 SELECT p.* 
                 FROM Products p join OrderDetails o on p.ProductID = o.ProductID
@@ -307,9 +313,11 @@ def get_customer_orders_detail(id):
     the_response.mimetype = 'application/json'
     return the_response
 
+# obtain orders for a customer with a certain customerID
 @customers.route('/customers/orders/<id>', methods=['GET'])
 def get_customer_orders(id):
     cursor = db.get_db().cursor()
+    # execute SQL query to obtain the customer's orders
     cursor.execute('''
                 SELECT *
                 From Orders
@@ -326,12 +334,14 @@ def get_customer_orders(id):
     return the_response
 
 @customers.route('/customers/order', methods=['POST'])
+# add a customer's order
 def add_customer_order():
     cursor = db.get_db().cursor()
     order_info = request.json
         # current_app.logger.infor(cust_info)
     PlacedTime = order_info['PlacedTime']
     cus_id = order_info['CustomerID']
+    # execute a SQL query to add the customer's order 
     cursor.execute('''
                     INSERT INTO commerce.Orders (Cost, PlacedTime, Status, CustomerID)
                     VALUE (%s, %s, %s, %s)
@@ -340,6 +350,7 @@ def add_customer_order():
     return 'added'
 
 @customers.route('/customers/order_detail', methods=['POST'])
+# add the details of a customer's order
 def add_customer_order_detail():
     cursor = db.get_db().cursor()
     order_info = request.json
@@ -347,6 +358,7 @@ def add_customer_order_detail():
     ProductID = order_info['ProductID']
     OrderID = order_info['OrderID']
     Quantity = order_info['Quantity']
+    # execute a SQL query to add the customer's order details
     cursor.execute('''
                     INSERT INTO commerce.OrderDetails (ProductID, OrderID, Quantity)
                     VALUE (%s, %s, %s)
