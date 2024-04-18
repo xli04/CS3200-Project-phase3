@@ -119,7 +119,7 @@ def update_sbs_products():
     SET Price = %s, UnitsInStock = %s, ProductionDescription = %s, UnitsSold = %s, OnSale = %s
     WHERE ProductID = %s    
     '''
-    cursor.execute(query, (price, units_in_stock, description, units_sold, on_sale, product_id))
+    cursor.execute(query, (price, units_in_stock, description, units_sold, on_sale, product_id)) #Executing Cursor Object Query
     db.get_db().commit()
     
     return "product updated"
