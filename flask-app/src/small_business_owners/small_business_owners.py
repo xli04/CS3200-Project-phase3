@@ -42,7 +42,7 @@ def get_business_detail (id):
 
     query = 'SELECT * FROM Small_Business_Seller WHERE BusinessID = ' + str(id)
     current_app.logger.info(query)
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)
     column_headers = [x[0] for x in cursor.description]
@@ -152,6 +152,7 @@ def add_new_business():
     cursor.execute(query, (username, password, email, profile))
     db.get_db().commit()
     
+    # return success statement
     return 'Success!'
 
 # Updates a business in the database
