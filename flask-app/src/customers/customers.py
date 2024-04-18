@@ -104,10 +104,10 @@ def get_customer(userID):
 
 @customers.route('/customers/<userID>', methods=['DELETE'])
 def delete_customer(userID):
-    cursor = db.get_db().cursor()
+    cursor = db.get_db().cursor() #Cursor Object to interacte with DB
     cursor.execute('''
                    DELETE FROM Customers where CustomerID = {0}
-                   '''.format(userID))
+                   '''.format(userID)) #Delete Query for Customer
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -116,7 +116,7 @@ def delete_customer(userID):
     the_response = make_response(jsonify(json_data))
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
-    db.get_db().commit()
+    db.get_db().commit() #Commit all changes
     return the_response
 
 # Get customer detail for customer with particular userID
@@ -127,7 +127,7 @@ def get_customer_cart(id):
                    SELECT Products.*, Product_In_Cart.*
                    FROM Cart NATURAL JOIN Product_In_Cart NATURAL JOIN Products
                    WHERE Cart.CustomerID = {0}
-                   '''.format(id))
+                   '''.format(id)) 
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
