@@ -123,13 +123,16 @@ def delete_customer(userID):
 @customers.route('/customers/cart/<id>', methods=['GET'])
 def get_customer_cart(id):
     cursor = db.get_db().cursor()
+    # Execute SQL query to fetch customer cart details
     cursor.execute('''
                    SELECT Products.*, Product_In_Cart.*
                    FROM Cart NATURAL JOIN Product_In_Cart NATURAL JOIN Products
                    WHERE Cart.CustomerID = {0}
                    '''.format(id)) 
     row_headers = [x[0] for x in cursor.description]
-    json_data = []
+    json_data = [] 
+    
+    # Fetch all rows from the executed query
     theData = cursor.fetchall()
     for row in theData:
         json_data.append(dict(zip(row_headers, row)))
