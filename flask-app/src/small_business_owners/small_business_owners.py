@@ -42,7 +42,7 @@ def get_business_detail (id):
 
     query = 'SELECT * FROM Small_Business_Seller WHERE BusinessID = ' + str(id)
     current_app.logger.info(query)
-    #Cursor Object Command
+    
     cursor = db.get_db().cursor()
     cursor.execute(query)
     column_headers = [x[0] for x in cursor.description]
