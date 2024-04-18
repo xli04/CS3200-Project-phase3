@@ -42,7 +42,7 @@ def get_business_detail (id):
 
     query = 'SELECT * FROM Small_Business_Seller WHERE BusinessID = ' + str(id)
     current_app.logger.info(query)
-
+    #Cursor Object Command
     cursor = db.get_db().cursor()
     cursor.execute(query)
     column_headers = [x[0] for x in cursor.description]
@@ -119,7 +119,7 @@ def update_sbs_products():
     SET Price = %s, UnitsInStock = %s, ProductionDescription = %s, UnitsSold = %s, OnSale = %s
     WHERE ProductID = %s    
     '''
-    cursor.execute(query, (price, units_in_stock, description, units_sold, on_sale, product_id))
+    cursor.execute(query, (price, units_in_stock, description, units_sold, on_sale, product_id)) #Executing Cursor Object Query
     db.get_db().commit()
     
     return "product updated"
